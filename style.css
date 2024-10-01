@@ -1,0 +1,51 @@
+body{background: #383838;}
+
+header{
+    color: white;
+    padding-left: 1em;
+    padding-top: 1em;
+    font-family: "Space Grotesk", system-ui;
+    font-optical-sizing: auto;
+    font-weight: medium;
+    font-style: normal;
+}
+.container{
+    padding: 1em;
+    column-count: 4;
+}
+
+img{
+    width: 100%;
+    margin-bottom: 1em;
+    border-radius: 10px;
+}
+
+@media(max-width: 800px){
+    .container{
+        column-count: 3;
+    }
+}
+
+@media(max-width: 600px){
+    .container{
+        column-count: 2;
+    }
+}
+
+@media(max-width: 400px){
+    .container{
+        column-count: 1;
+    }
+}
+
+.foot{
+    color: white;
+    text-align: center;
+    padding-right: 1em;
+    padding-top: 1em;
+    padding-bottom: 2em;
+    font-family: "Space Grotesk", system-ui;
+    font-optical-sizing: auto;
+    font-weight: medium;
+    font-style: normal;
+}

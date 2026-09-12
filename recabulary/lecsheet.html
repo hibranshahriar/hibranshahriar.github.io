@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recabulary | Hibran</title>
+<style>
+  :root{
+    --ink:#151b19;
+    --ink-soft:#1d2724;
+    --paper:#efe6d2;
+    --paper-shadow: rgba(24,18,8,.45);
+    --text-dark:#2b2013;
+    --text-muted:#6b6152;
+    --text-on-dark:#cfc9b8;
+    --text-on-dark-dim:#8b9089;
+    --accent-correct:#5f8f6a;
+    --accent-wrong:#b8503f;
+    --accent-gold:#c99a3e;
+    --hairline: rgba(43,32,19,.18);
+    --hairline-dark: rgba(255,255,255,.1);
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, var(--ink-soft) 0%, var(--ink) 70%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-on-dark);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 20px 60px;
+  }
+
+  header{
+    width:100%;
+    max-width:520px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 8vh;
+  }
+
+  .brand{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+    color: var(--text-on-dark);
+  }
+
+  .score{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: .85rem;
+    color: var(--text-on-dark-dim);
+  }
+
+  .tally{
+    display:inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tally-correct{ background: var(--accent-correct); }
+  .tally-wrong{ background: var(--accent-wrong); }
+
+  main{
+    width:100%;
+    max-width: 480px;
+  }
+
+  .card{
+    background: var(--paper);
+    border-radius: 5px;
+    padding: 40px 36px 32px;
+    box-shadow: 0 20px 44px var(--paper-shadow);
+  }
+
+  .tag{
+    margin: 0 0 10px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .word{
+    margin: 0 0 30px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    text-transform: capitalize;
+    line-height: 1.15;
+  }
+
+  .options{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+
+  .options li + li{
+    border-top: 1px solid var(--hairline);
+  }
+
+  .option{
+    width:100%;
+    display:flex;
+    align-items:baseline;
+    gap: 14px;
+    background:none;
+    border:none;
+    text-align:left;
+    padding: 14px 6px;
+    font-size: 1.02rem;
+    color: var(--text-dark);
+    cursor:pointer;
+    border-radius: 3px;
+    transition: background .15s, color .15s;
+  }
+  .option:hover:not(:disabled){ background: rgba(43,32,19,.06); }
+  .option:focus-visible{ outline: 2px solid var(--accent-gold); outline-offset: -2px; }
+  .option:disabled{ cursor: default; }
+
+  .option .letter{
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--text-muted);
+    flex-shrink:0;
+  }
+
+  .option.correct{ background: var(--accent-correct); color:#fff; }
+  .option.correct .letter{ color: rgba(255,255,255,.75); }
+  .option.wrong{ background: var(--accent-wrong); color:#fff; text-decoration: line-through; opacity:.9; }
+  .option.wrong .letter{ color: rgba(255,255,255,.75); }
+
+  .next-btn{
+    display:block;
+    margin: 26px 0 0;
+    background: var(--accent-gold);
+    color: var(--ink);
+    border:none;
+    font-size: .92rem;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 3px;
+    cursor:pointer;
+    transition: filter .15s;
+  }
+  .next-btn:hover, .next-btn:focus-visible{ filter: brightness(1.08); }
+
+  .example{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+    overflow: hidden;
+  }
+  .example.is-visible{
+    grid-template-rows: 1fr;
+  }
+  .example-text{
+    min-height: 0;
+    overflow: hidden;
+    margin: 22px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    font-size: .95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .example-text .label{
+    font-style: normal;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+  .example-text strong{
+    font-style: normal;
+    font-weight: 600;
+    color: #9c6f1f;
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 32px 24px 26px; }
+    header{ margin-bottom: 6vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <header>
+      <span class="brand">Recabulary</span>
+      <span class="score">Score <span class="tally tally-correct" id="correctTally">+0</span><span class="tally tally-wrong" id="wrongTally">-0</span></span>
+    </header>
+
+    <main>
+      <div class="card">
+        <p class="tag" id="cardTag">Card 1 of 20</p>
+        <h1 class="word" id="wordDisplay">—</h1>
+        <ul class="options" id="options"></ul>
+        <div class="example" id="exampleSentence"><p class="example-text" id="exampleText"></p></div>
+        <button class="next-btn" id="nextBtn" hidden>Next card</button>
+      </div>
+    </main>
+  </div>
+
+<script>
+  const WORDS = [
+    { word: "Abate", meaning: "to reduce", example: "The storm finally abated after three days." },
+{ word: "Abdicate", meaning: "to step down from a position of power", example: "The king abdicated his throne to marry a commoner." },
+{ word: "Aberration", meaning: "something not typical", example: "His rude behavior was an aberration from his usual kindness." },
+{ word: "Abhor", meaning: "to hate", example: "She abhors any form of cruelty to animals." },
+{ word: "Abject", meaning: "hopeless", example: "The refugees lived in abject poverty." },
+{ word: "Augment", meaning: "to increase or enhance something", example: "Reading regularly can augment your vocabulary and comprehension skills." },
+{ word: "Abridge", meaning: "to shorten", example: "The editor abridged the novel to fit the magazine." },
+{ word: "Absolve", meaning: "to free from blame", example: "The court absolved him of all charges." },
+{ word: "Abstract", meaning: "theoretical", example: "Mathematics can seem very abstract to young students." },
+{ word: "Abstruse", meaning: "difficult to understand", example: "The professor's lecture was so abstruse that students fell asleep." },
+{ word: "Acclaim", meaning: "to praise publicly and enthusiastically", example: "The film received widespread acclaim from critics." },
+{ word: "Accolade", meaning: "an honor", example: "Winning the Nobel Prize is the highest accolade a scientist can receive." },
+{ word: "Accrue", meaning: "to accumulate over time", example: "Interest accrues on savings accounts monthly." },
+{ word: "Acquiesce", meaning: "to comply passively", example: "She acquiesced to his plan despite her doubts." },
+{ word: "Acquit", meaning: "to find not guilty", example: "The jury acquitted him after reviewing the evidence." },
+{ word: "Acumen", meaning: "mental sharpness", example: "Her business acumen helped the company grow rapidly." },
+{ word: "Adamant", meaning: "stubborn", example: "She was adamant about not changing her decision." },
+{ word: "Admonish", meaning: "to warn", example: "The teacher admonished students to study hard." },
+{ word: "Adroit", meaning: "skillful", example: "She was adroit at handling difficult customers." },
+{ word: "Alacrity", meaning: "cheerful promptness", example: "He accepted the challenge with alacrity." },
+{ word: "Alienate", meaning: "to estrange", example: "His arrogance alienated all his friends." },
+{ word: "Alleviate", meaning: "to relieve", example: "The medicine helped alleviate his pain." },
+{ word: "Ambiguous", meaning: "unclear in meaning", example: "His ambiguous answer left everyone confused." },
+{ word: "Ameliorate", meaning: "to make better", example: "New policies were introduced to ameliorate living conditions." },
+{ word: "Banal", meaning: "lacking originality; commonplace", example: "The movie received poor reviews because critics found its plot banal and predictable." },
+{ word: "Bane", meaning: "a cause of misery or harm", example: "Procrastination has been the bane of many students preparing for admission tests." },
+{ word: "Belittle", meaning: "to make someone or something seem less important", example: "Good leaders encourage others instead of belittling their efforts." },
+{ word: "Belligerent", meaning: "hostile and aggressive", example: "His belligerent attitude created tension during the meeting." },
+{ word: "Benevolent", meaning: "generous and kind", example: "The benevolent donor funded scholarships for disadvantaged students." },
+{ word: "Benign", meaning: "harmless; gentle", example: "Fortunately, the tumor was benign rather than cancerous." },
+{ word: "Breach", meaning: "a violation or breaking of a law, agreement, or relationship", example: "Sharing confidential information would be a breach of company policy." },
+{ word: "Blatant", meaning: "offensively obvious", example: "His blatant disregard for the rules angered everyone." },
+{ word: "Bliss", meaning: "perfect happiness", example: "After the exam ended, the students felt a sense of bliss." },
+{ word: "Bolster", meaning: "to support or strengthen", example: "Regular practice can bolster a student's confidence." },
+{ word: "Bombastic", meaning: "pompous and inflated in language", example: "The politician's bombastic speech failed to impress the audience." },
+{ word: "Boorish", meaning: "rude and insensitive", example: "His boorish behavior offended the guests." },
+{ word: "Brevity", meaning: "briefness", example: "Brevity is often appreciated in professional communication." },
+{ word: "Bridle", meaning: "to restrain or control", example: "She struggled to bridle her anger during the argument." },
+{ word: "Broach", meaning: "to introduce a topic for discussion", example: "Nobody wanted to broach the issue of budget cuts." },
+{ word: "Bucolic", meaning: "relating to the countryside", example: "The village offered a peaceful and bucolic environment." },
+{ word: "Buffoon", meaning: "a ridiculous or foolish person", example: "The comedian played the role of a buffoon in the play." },
+{ word: "Burnish", meaning: "to polish; to improve one's reputation", example: "The award helped burnish the company's image." },
+{ word: "Buttress", meaning: "to support or reinforce", example: "The evidence buttressed the lawyer's argument." },
+{ word: "Burgeon", meaning: "to grow or develop rapidly", example: "Interest in artificial intelligence has burgeoned in recent years." },
+{ word: "Bequeath", meaning: "to leave something to someone by a will", example: "She bequeathed her entire library to the university." },
+{ word: "Bereft", meaning: "deprived of something important", example: "The family was bereft of hope after the disaster." },
+{ word: "Berate", meaning: "to scold harshly", example: "The coach berated the players for their lack of discipline." },
+{ word: "Bias", meaning: "prejudice in favor of or against something", example: "Journalists should avoid personal bias when reporting news." }
+  ];
+
+  let bag = [];
+  let current = null;
+  let answered = false;
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  const wordDisplay = document.getElementById("wordDisplay");
+  const optionsList = document.getElementById("options");
+  const cardTag = document.getElementById("cardTag");
+  const correctTally = document.getElementById("correctTally");
+  const wrongTally = document.getElementById("wrongTally");
+  const nextBtn = document.getElementById("nextBtn");
+  const exampleSentence = document.getElementById("exampleSentence");
+  const exampleText = document.getElementById("exampleText");
+  const LETTERS = ["A", "B", "C", "D", "E"];
+
+  function shuffle(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function refillBag(){
+    bag = shuffle([...WORDS]);
+  }
+
+  function pickDistractors(word, count){
+    const chosen = new Set([word]);
+    const result = [];
+    const attemptLimit = WORDS.length * 5;
+    let attempts = 0;
+    while(result.length < count && attempts < attemptLimit){
+      attempts++;
+      const candidate = WORDS[Math.floor(Math.random() * WORDS.length)];
+      if(chosen.has(candidate.word)) continue;
+      chosen.add(candidate.word);
+      result.push(candidate);
+    }
+    return result;
+  }
+
+  function nextCard(){
+    if(bag.length === 0) refillBag();
+    current = bag.pop();
+    answered = false;
+    nextBtn.hidden = true;
+    render();
+  }
+
+  function render(){
+    exampleSentence.classList.remove("is-visible");
+    exampleText.innerHTML = "";
+    cardTag.textContent = "Card " + (WORDS.length - bag.length) + " of " + WORDS.length;
+    wordDisplay.textContent = current.word;
+
+    const distractorCount = Math.min(4, WORDS.length - 1);
+    const distractors = pickDistractors(current.word, distractorCount);
+    const choices = shuffle([current, ...distractors]);
+
+    optionsList.innerHTML = "";
+    choices.forEach((choice, i) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.dataset.meaning = choice.meaning;
+      btn.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span>' + choice.meaning + '</span>';
+      btn.addEventListener("click", () => handleAnswer(btn, choice));
+      li.appendChild(btn);
+      optionsList.appendChild(li);
+    });
+  }
+
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlightWord(sentence, word){
+    const regex = new RegExp("\\b" + escapeRegExp(word) + "\\b", "i");
+    return sentence.replace(regex, match => "<strong>" + match + "</strong>");
+  }
+
+  function handleAnswer(btn, choice){
+    if(answered) return;
+    answered = true;
+
+    const allBtns = optionsList.querySelectorAll(".option");
+    allBtns.forEach(b => b.disabled = true);
+
+    if(choice.word === current.word){
+      btn.classList.add("correct");
+      correctCount++;
+      correctTally.textContent = "+" + correctCount;
+    } else {
+      btn.classList.add("wrong");
+      wrongCount++;
+      wrongTally.textContent = "-" + wrongCount;
+      allBtns.forEach(b => {
+        if(b.dataset.meaning === current.meaning) b.classList.add("correct");
+      });
+    }
+
+    exampleText.innerHTML = '<span class="label">In use —</span> ' + highlightWord(current.example, current.word);
+    exampleSentence.classList.add("is-visible");
+    nextBtn.hidden = false;
+  }
+
+  nextBtn.addEventListener("click", nextCard);
+
+  document.addEventListener("keydown", (e) => {
+    if(answered) return;
+    const idx = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 }[e.key];
+    if(idx === undefined) return;
+    const btn = optionsList.querySelectorAll(".option")[idx];
+    if(btn) btn.click();
+  });
+
+  nextCard();
+</script>
+</body>
+</html>

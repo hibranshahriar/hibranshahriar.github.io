@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recabulary | Hibran</title>
+<style>
+  :root{
+    --ink:#151b19;
+    --ink-soft:#1d2724;
+    --paper:#efe6d2;
+    --paper-shadow: rgba(24,18,8,.45);
+    --text-dark:#2b2013;
+    --text-muted:#6b6152;
+    --text-on-dark:#cfc9b8;
+    --text-on-dark-dim:#8b9089;
+    --accent-correct:#5f8f6a;
+    --accent-wrong:#b8503f;
+    --accent-gold:#c99a3e;
+    --accent-gold-dark:#9c6f1f;
+    --hairline: rgba(43,32,19,.18);
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, var(--ink-soft) 0%, var(--ink) 70%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-on-dark);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 20px 60px;
+  }
+
+  header{
+    width:100%;
+    max-width:480px;
+    margin-bottom: 8vh;
+  }
+
+  .brand{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+    color: var(--text-on-dark);
+  }
+
+  main{
+    width:100%;
+    max-width: 480px;
+  }
+
+  .card{
+    background: var(--paper);
+    border-radius: 5px;
+    padding: 40px 36px 32px;
+    box-shadow: 0 20px 44px var(--paper-shadow);
+  }
+
+  .tag{
+    margin: 0 0 10px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .title{
+    margin: 0 0 10px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    line-height: 1.15;
+  }
+
+  .subtitle{
+    margin: 0 0 26px;
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .word{
+    margin: 0 0 30px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    text-transform: capitalize;
+    line-height: 1.15;
+  }
+
+  /* Letter grid */
+  .letter-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+    gap: 10px;
+  }
+
+  .letter-btn{
+    aspect-ratio: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .letter-btn:hover:not(:disabled), .letter-btn:focus-visible:not(:disabled){
+    background: rgba(201,154,62,.16);
+    border-color: var(--accent-gold-dark);
+  }
+  .letter-btn:focus-visible{ outline: 2px solid var(--accent-gold-dark); outline-offset: 1px; }
+  .letter-btn:disabled{
+    color: var(--text-muted);
+    opacity: .35;
+    cursor: not-allowed;
+  }
+
+  /* Quiz view */
+  .quiz-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 24px;
+  }
+
+  .back-link{
+    background:none;
+    border:none;
+    color: var(--text-muted);
+    font-size: .82rem;
+    cursor:pointer;
+    padding: 0;
+    border-bottom: 1px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .back-link:hover, .back-link:focus-visible{
+    color: var(--accent-gold-dark);
+    border-bottom-color: var(--accent-gold-dark);
+  }
+
+  .score{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: .85rem;
+    color: var(--text-muted);
+  }
+
+  .tally{
+    display:inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tally-correct{ background: var(--accent-correct); }
+  .tally-wrong{ background: var(--accent-wrong); }
+
+  .options{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .options li + li{
+    border-top: 1px solid var(--hairline);
+  }
+
+  .option{
+    width:100%;
+    display:flex;
+    align-items:baseline;
+    gap: 14px;
+    background:none;
+    border:none;
+    text-align:left;
+    padding: 14px 6px;
+    font-size: 1.02rem;
+    color: var(--text-dark);
+    cursor:pointer;
+    border-radius: 3px;
+    transition: background .15s, color .15s;
+  }
+  .option:hover:not(:disabled){ background: rgba(43,32,19,.06); }
+  .option:focus-visible{ outline: 2px solid var(--accent-gold); outline-offset: -2px; }
+  .option:disabled{ cursor: default; }
+
+  .option .letter{
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--text-muted);
+    flex-shrink:0;
+  }
+
+  .option.correct{ background: var(--accent-correct); color:#fff; }
+  .option.correct .letter{ color: rgba(255,255,255,.75); }
+  .option.wrong{ background: var(--accent-wrong); color:#fff; text-decoration: line-through; opacity:.9; }
+  .option.wrong .letter{ color: rgba(255,255,255,.75); }
+
+  .next-btn{
+    display:block;
+    margin: 26px 0 0;
+    background: var(--accent-gold);
+    color: var(--ink);
+    border:none;
+    font-size: .92rem;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 3px;
+    cursor:pointer;
+    transition: filter .15s;
+  }
+  .next-btn:hover, .next-btn:focus-visible{ filter: brightness(1.08); }
+
+  .example{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+    overflow: hidden;
+  }
+  .example.is-visible{
+    grid-template-rows: 1fr;
+  }
+  .example-text{
+    min-height: 0;
+    overflow: hidden;
+    margin: 22px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    font-size: .95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .example-text .label{
+    font-style: normal;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+  .example-text strong{
+    font-style: normal;
+    font-weight: 600;
+    color: var(--accent-gold-dark);
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 32px 24px 26px; }
+    header{ margin-bottom: 6vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <header>
+      <span class="brand">Recabulary</span>
+    </header>
+
+    <main>
+      <div id="letterView">
+        <div class="card">
+          <p class="tag">834 words total</p>
+          <h1 class="title">Wordsmart (letters)</h1>
+          <p class="subtitle">Pick a starting letter</p>
+          <div class="letter-grid" id="letterGrid"></div>
+        </div>
+      </div>
+
+      <div id="quizView" hidden>
+        <div class="card">
+          <div class="quiz-topbar">
+            <button class="back-link" id="backBtn">‹ All letters</button>
+            <span class="score">Score <span class="tally tally-correct" id="correctTally">+0</span><span class="tally tally-wrong" id="wrongTally">-0</span></span>
+          </div>
+          <p class="tag" id="cardTag"></p>
+          <h1 class="word" id="wordDisplay">—</h1>
+          <ul class="options" id="options"></ul>
+          <div class="example" id="exampleSentence"><p class="example-text" id="exampleText"></p></div>
+          <button class="next-btn" id="nextBtn" hidden>Next card</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+  const WORDS = [
+    { word: "Abash", meaning: "to make ashamed; to embarrass", example: "Meredith felt abashed by her inability to remember her lines in the school chorus of 'Old McDonald Had a Farm.'." },
+{ word: "Abate", meaning: "to subside; to reduce", example: "George spilled a pot of hot coffee on his leg. It hurt quite a bit. Then, gradually, the agony abated." },
+{ word: "Abdicate", meaning: "to step down from a position of power or responsibility", example: "When King Edward VIII of England decided he would rather be married to Wallis Warfield Simpson, an American divorcée, than be king of England, he turned in his crown and abdicated." },
+{ word: "Aberration", meaning: "something not typical; a deviation from the standard", example: "Søren’s bad behavior was an aberration. So was Harry’s good behavior." },
+{ word: "Abhor", meaning: "to hate very, very much; to detest", example: "Emanuel abhorred having anvils dropped on his head." },
+{ word: "Abject", meaning: "hopeless; extremely sad and servile; defeated", example: "While most people would quickly recover from a banana-peel accident, Mia felt abject humiliation." },
+{ word: "Abnegate", meaning: "to deny oneself things; to reject; to renounce", example: "Ascetics practice self-abnegation because they believe it will bring them closer to spiritual purity." },
+{ word: "Abortive", meaning: "unsuccessful", example: "Marie and Elizabeth made an abortive effort to bake a birthday cake; that is, their effort did not result in a birthday cake." },
+{ word: "Abridge", meaning: "to shorten; to condense", example: "The thoughtful editor abridged the massive book by removing the boring parts." },
+{ word: "Absolute", meaning: "total; unlimited", example: "An absolute ruler is one who is ruled by no one else." },
+{ word: "Absolve", meaning: "to forgive; to free from obligation or guilt", example: "Jake absolved Ciara of her obligation to go to the prom with him; he told her it was all right if she went with the captain of the football team instead." },
+{ word: "Abstinent", meaning: "abstaining; voluntarily not doing something, especially something pleasant that is bad for you or has a bad reputation", example: "Beulah used to be a chain-smoker; now she’s abstinent." },
+{ word: "Abstract", meaning: "theoretical; impersonal", example: "He liked oysters in the abstract, but when he actually tried one he became nauseated." },
+{ word: "Abstruse", meaning: "hard to understand", example: "The professor’s article, on the meaning of meaning, was abstruse." },
+{ word: "Abysmal", meaning: "extremely hopeless or wretched; bottomless", example: "The nation’s debt crisis was abysmal; there seemed to be no possible solution." },
+{ word: "Accolade", meaning: "an award; an honor", example: "The first breakdancing troupe to perform in Carnegie Hall, the Teflon Toughs, received accolades from the critics as well as from the fans." },
+{ word: "Accost", meaning: "to approach and speak to someone aggressively", example: "Amanda karate-chopped the stranger who accosted her in the street and was embarrassed to find he was an old, blind man." },
+{ word: "Acerbic", meaning: "sour; severe; like acid in temper, mood, or tone", example: "Barry sat silently as our teacher read aloud her acerbic comments on his paper." },
+{ word: "Acquiesce", meaning: "to comply passively; to accept; to assent; to agree", example: "The pirates asked Pete to walk the plank; he took one look at their swords and then acquiesced." },
+{ word: "Acrid", meaning: "harshly pungent; bitter", example: "The chili we had at the party had an acrid taste; it was harsh and unpleasant." },
+{ word: "Acrimonious", meaning: "full of spite; bitter; nasty", example: "George and Elizabeth’s discussion turned acrimonious when Elizabeth introduced the subject of George’s perennial, incorrigible stupidity." },
+{ word: "Acumen", meaning: "keenness of judgment; mental sharpness", example: "A woman who knows how to turn one dollar into a million overnight might be said to have a lot of business acumen." },
+{ word: "Acute", meaning: "sharp; shrewd", example: "If your eyesight is acute, you can see things that other people can’t." },
+{ word: "Adamant", meaning: "stubborn; unyielding; completely inflexible", example: "Candice was adamant: She would never go out with Paul again." },
+{ word: "Address", meaning: "to speak to; to direct one’s attention to", example: "Ernie addressed the problem of addressing the convention by sitting down and writing his speech." },
+{ word: "Adherent", meaning: "follower; supporter; believer", example: "The king’s adherents threw a big birthday party for him, just to show how much they liked him." },
+{ word: "Admonish", meaning: "to scold gently; to warn", example: "The boys’ father admonished them not to eat the pie he had just baked." },
+{ word: "Adroit", meaning: "skillful; dexterous; clever; shrewd; socially at ease", example: "Julio was an adroit salesperson: His highly skilled pitch, backed up by extensive product knowledge, nearly always resulted in a sale." },
+{ word: "Adulation", meaning: "wild or excessive admiration; flattery", example: "The boss thrived on the adulation of his scheming secretary." },
+{ word: "Adulterate", meaning: "to contaminate; to make impure", example: "We discovered that our orange juice had radioactive waste in it; we discovered, in other words, that it had been adulterated." },
+{ word: "Adverse", meaning: "unfavorable; antagonistic", example: "We had to play our soccer match under adverse conditions: It was snowing and only three members of our team had bothered to show up." },
+{ word: "Aesthetic", meaning: "having to do with artistic beauty; artistic", example: "Our art professor had a highly developed aesthetic sense; he found things to admire in paintings that, to us, looked like garbage." },
+{ word: "Affable", meaning: "easy to talk to; friendly", example: "Susan was an affable girl; she could strike up a pleasant conversation with almost anyone." },
+{ word: "Affectation", meaning: "unnatural or artificial behavior, usually intended to impress others", example: "Becky’s affectation of upside-down driving drove her driving instructor crazy." },
+{ word: "Affinity", meaning: "sympathy; attraction; kinship; similarity", example: "Ducks have an affinity for water; that is, they like to be in it." },
+{ word: "Affluent", meaning: "rich; prosperous", example: "A person can be affluent; all it takes is money." },
+{ word: "Agenda", meaning: "program; the things to be done", example: "What’s on the agenda for the board meeting? A little gossip, then lunch." },
+{ word: "Aggregate", meaning: "sum total; a collection of separate things mixed together", example: "Chili is an aggregate of meat and beans." },
+{ word: "Agnostic", meaning: "one who believes that the existence of a god can be neither proven nor disproven", example: "In fact, Jorge’s reluctance to affirm or discredit a god’s existence reflects his agnosticism." },
+{ word: "Agrarian", meaning: "relating to land; relating to the management or farming of land", example: "Politics in this country often pit the rural, agrarian interests against the urban interests." },
+{ word: "Alacrity", meaning: "cheerful eagerness or readiness to respond", example: "David could hardly wait for his parents to leave; he carried their luggage out to the car with great alacrity." },
+{ word: "Allege", meaning: "to assert without proof", example: "If I say, 'Cedrick alleges that I stole his hat,' I am saying Cedrick says I stole his hat." },
+{ word: "Alleviate", meaning: "to relieve, usually temporarily or incompletely; to make bearable; to lessen", example: "Visiting the charming pet cemetery alleviated the woman’s grief over the death of her canary." },
+{ word: "Allocate", meaning: "to distribute; to assign; to allot", example: "The office manager had allocated just seven paper clips for our entire department." },
+{ word: "Alloy", meaning: "a combination of two or more things, usually metals", example: "Brass is an alloy of copper and zinc." },
+{ word: "Allusion", meaning: "an indirect reference (often to a literary work); a hint", example: "When Ralph said, 'I sometimes wonder whether to be or not to be,' he was alluding to a famous line in Hamlet." },
+{ word: "Aloof", meaning: "uninvolved; standing off; keeping one’s distance", example: "Al, on the roof, felt very aloof." },
+{ word: "Altruism", meaning: "selflessness; generosity; devotion to the interests of others", example: "The private foundation depended on the altruism of the extremely rich old man." },
+{ word: "Ambience", meaning: "atmosphere; mood; feeling", example: "By decorating their house with plastic beach balls and Popsicle sticks, the Cramers created a playful ambience that delighted young children." },
+{ word: "Ambiguous", meaning: "unclear in meaning; confusing; capable of being interpreted in different ways", example: "We listened to the weather report, but the forecast was ambiguous; we couldn’t tell whether the day was going to be rainy or sunny." },
+{ word: "Ambivalent", meaning: "undecided; having opposed feelings simultaneously", example: "Susan felt ambivalent about George as a boyfriend." },
+{ word: "Ameliorate", meaning: "to make better or more tolerable", example: "The mood of the prisoners was ameliorated when the warden gave them color television sets and keys to their cells." },
+{ word: "Amenable", meaning: "obedient; willing to give in to the wishes of another; agreeable", example: "I suggested that Bert pay for my lunch as well as for his own; to my surprise, he was amenable." },
+{ word: "Amenity", meaning: "pleasantness; attractive or comfortable feature", example: "The amenities at the local club include a swimming pool, a golf course, and a fallout shelter." },
+{ word: "Amiable", meaning: "friendly; agreeable", example: "Our amiable guide made us feel right at home in what would otherwise have been a cold and forbidding museum." },
+{ word: "Amnesty", meaning: "an official pardon for a group of people who have violated a law or policy", example: "When a state government declares a tax amnesty, it is saying that if people pay the taxes they owe, the government will officially 'forget' that they broke the law." },
+{ word: "Amoral", meaning: "lacking a sense of right and wrong; neither good nor bad, neither moral nor immoral; without moral feelings", example: "Very young children are amoral; when they cry, they aren’t being bad or good—they’re merely doing what they have to do." },
+{ word: "Amorous", meaning: "feeling loving, especially in a sexual sense; in love; relating to love", example: "The amorous couple made quite a scene at the movie." },
+{ word: "Amorphous", meaning: "shapeless; without a regular or stable shape; bloblike", example: "Ed’s teacher said that his term paper was amorphous; it was as shapeless and disorganized as a cloud." },
+{ word: "Anachronism", meaning: "something out of place in time or history; an incongruity", example: "In this day of impersonal hospitals, a family doctor who will visit you at home seems like an anachronism." },
+{ word: "Analogy", meaning: "a comparison of one thing to another; similarity", example: "To say having an allergy feels like being bitten by an alligator would be to make or draw an analogy between an allergy and an alligator bite." },
+{ word: "Anarchy", meaning: "absence of government or control; lawlessness; disorder", example: "The country fell into a state of anarchy after the rebels kidnapped the president and locked the legislature inside the Capitol." },
+{ word: "Anecdote", meaning: "a short account of a humorous or revealing incident", example: "The old lady kept the motorcycle gang thoroughly amused with anecdote after anecdote about her cute little dog." },
+{ word: "Anguish", meaning: "agonizing physical or mental pain", example: "Theresa had been a nurse in the emergency room for twenty years, but she had never gotten used to the anguish of accident victims." },
+{ word: "Animosity", meaning: "resentment; hostility; ill will", example: "The rivals for the state championship felt great animosity toward each other." },
+{ word: "Anomaly", meaning: "an aberration; an irregularity; a deviation", example: "A snowy winter day is not an anomaly, but a snowy July day is." },
+{ word: "Antecedent", meaning: "someone or something that went before; something that provides a model for something that came after it", example: "Your parents and grandparents could be said to be your antecedents; they came before you." },
+{ word: "Antipathy", meaning: "firm dislike; a dislike", example: "I feel antipathy toward bananas wrapped in ham." },
+{ word: "Antithesis", meaning: "the direct opposite", example: "Erin is the antithesis of Aaron: Erin is bright and beautiful; Aaron is dull and plain." },
+{ word: "Apartheid", meaning: "the former policy of racial segregation and oppression in the Republic of South Africa", example: "Under apartheid in South Africa, blacks were kept apart from whites and denied all rights." },
+{ word: "Apathy", meaning: "lack of interest; lack of feeling", example: "The members of the student council accused the senior class of apathy because none of the seniors had bothered to sign up for the big annual bake sale." },
+{ word: "Aphorism", meaning: "a brief, often witty saying; a proverb", example: "Chef Hussain is particularly fond of Woolf’s aphorism, 'One cannot think well, love well, or sleep well, if one has not dined well.'" },
+{ word: "Apocalypse", meaning: "a prophetic revelation, especially one concerning the end of the world", example: "In strict usage, apocalypse refers to specific Christian writings, but most people use it more generally in connection with predictions of things like nuclear war." },
+{ word: "Apocryphal", meaning: "of dubious authenticity; fictitious; spurious", example: "Brandi’s blog discredited the apocryphal report of Martians in Congress." },
+{ word: "Apotheosis", meaning: "elevation to divine status; the perfect example of something", example: "Some people think that the Corvette is the apotheosis of American carmaking." },
+{ word: "Appease", meaning: "to soothe; to pacify by giving in to", example: "Jaleel appeased his angry mother by promising to make his bed every morning without fail until the end of time." },
+{ word: "Appreciate", meaning: "to increase in value", example: "The Browns bought their house twenty years ago for a hundred dollars, but it has appreciated considerably since then." },
+{ word: "Apprehensive", meaning: "worried; anxious", example: "The apprehensive child clung to his father’s leg as the two of them walked into the main circus tent to watch the lion tamer." },
+{ word: "Approbation", meaning: "approval; praise", example: "The crowd expressed its approbation of what the team had done by gleefully covering the field with chicken carcasses." },
+{ word: "Appropriate", meaning: "to take without permission; to set aside for a particular use", example: "Nick appropriated my lunch; he grabbed it out of my hands and ate it." },
+{ word: "Aptitude", meaning: "capacity for learning; natural ability", example: "The Princeton Review students have a marked aptitude for taking the SAT." },
+{ word: "Arbiter", meaning: "one who decides; a judge", example: "An arbiter of fashion determines what other people will wear by wearing it herself." },
+{ word: "Arbitrary", meaning: "random; capricious", example: "The grades Mr. Simone gave his English students appeared to be arbitrary; they didn’t seem related to anything the students had done in class." },
+{ word: "Arcane", meaning: "mysterious; known only to a select few", example: "The rites of the secret cult were arcane; no one outside the cult knew what they were." },
+{ word: "Archaic", meaning: "extremely old; ancient; outdated", example: "The tribe’s traditions are archaic. They have been in force for thousands of years." },
+{ word: "Archetype", meaning: "an original model or pattern", example: "Plato is the archetype of all philosophers." },
+{ word: "Ardent", meaning: "passionate; enthusiastic", example: "Blanche happily stuffed badgers from morning to night. She was an ardent taxidermist." },
+{ word: "Arduous", meaning: "hard; difficult", example: "Climbing the mountain was arduous. We were so exhausted when we got to the top that we forgot to enjoy the view." },
+{ word: "Aristocratic", meaning: "of noble birth; snobbish", example: "Prince Charles is aristocratic. He is a member of the British aristocracy." },
+{ word: "Artful", meaning: "crafty; wily; sly", example: "After dinner, the artful counselor told the campers that there was a madman loose in the woods, thus causing them to lie quietly in the tent." },
+{ word: "Artifice", meaning: "a clever trick; cunning", example: "The Trojan Horse was an artifice designed to get the soldiers inside the walls." },
+{ word: "Ascendancy", meaning: "supremacy; domination", example: "Small computers have been in ascendancy for the past few years." },
+{ word: "Ascetic", meaning: "hermitlike; practicing self-denial", example: "In his effort to save money, Roy led an ascetic existence: He never went out, he never ate anything but soup, and he never had any fun." },
+{ word: "Assiduous", meaning: "hardworking; busy; quite diligent", example: "Wendell was the only assiduous student in the entire math class; all the other students had to copy their homework from him." },
+{ word: "Assimilate", meaning: "to take in; to absorb; to learn thoroughly", example: "Margaret didn’t have any friends when she first went to the new school, but she was gradually assimilated—she became part of the new community." },
+{ word: "Assuage", meaning: "to soothe; to pacify; to ease the pain of; to relieve", example: "Beth was extremely angry, but I assuaged her by promising to leave the house and never return." },
+{ word: "Astute", meaning: "shrewd; keen in judgment", example: "Morris was an astute judge of character; he was very good at seeing what people are really like." },
+{ word: "Atheist", meaning: "one who does not believe in the existence of any god or divine being", example: "Hadley had always imagined a big religious wedding, but Emma, a lifelong atheist, preferred a Vegas elopement." },
+{ word: "Attrition", meaning: "gradual wearing away, weakening, or loss; a natural or expected decrease in numbers or size", example: "Mr. Gregory did not have the heart to fire his workers even though his company was losing millions each year. He altruistically preferred to lose workers through attrition when they moved away, retired, or decided to change jobs." },
+{ word: "Audacity", meaning: "boldness; reckless daring; impertinence", example: "Edgar’s soaring leap off the top of the building was an act of great audacity." },
+{ word: "Augment", meaning: "to make bigger; to add to; to increase", example: "The army augmented its attack by sending in a few thousand more soldiers." },
+{ word: "Auspicious", meaning: "favorable; promising; pointing to a good result", example: "A clear sky in the morning is an auspicious sign on the day of a picnic." },
+{ word: "Austere", meaning: "unadorned; stern; forbidding; without excess", example: "The Smiths’ house was austere; there was no furniture in it, and there was nothing hanging on the walls." },
+{ word: "Autocratic", meaning: "ruling with absolute authority; extremely bossy", example: "An autocratic ruler is a dictator." },
+{ word: "Autonomous", meaning: "acting independently", example: "The West Coast office of the law firm was quite autonomous; it never asked the East Coast office for permission before it did anything." },
+{ word: "Avarice", meaning: "greed; excessive love of riches", example: "The rich man’s avarice was annoying to everyone who wanted to lay hands on some of his money." },
+{ word: "Avow", meaning: "to claim; to declare boldly; to admit", example: "At the age of twenty-five, Louis finally avowed that he couldn’t stand his mother’s apple pie." },
+{ word: "Avuncular", meaning: "like an uncle, especially a nice uncle", example: "Professor Zia often gave us avuncular advice; he took a real interest in our education and helped us with other problems that weren’t related to multidimensional calculus." },
+{ word: "Awry", meaning: "off course; twisted to one side", example: "The hunter’s bullet went awry. Instead of hitting the bear, it hit his truck." },
+{ word: "Axiom", meaning: "a self-evident rule or truth; a widely accepted saying", example: "'Everything that is living dies' is an axiom." },
+{ word: "Banal", meaning: "unoriginal; ordinary", example: "The dinner conversation was so banal that Amanda fell asleep in her dessert dish." },
+{ word: "Bane", meaning: "poison; torment; cause of harm", example: "To say that someone is the bane of your existence is to say that that person poisons your enjoyment of life." },
+{ word: "Bastion", meaning: "stronghold; fortress; fortified place", example: "Mrs. Garnett’s classroom is a bastion of banality; that is, it’s a place where originality seldom, if ever, makes its way inside." },
+{ word: "Beget", meaning: "to give birth to; to create; to lead to; to cause", example: "Those who lie should be creative and have good memories, since one lie often begets another lie, which begets another." },
+{ word: "Belabor", meaning: "to go over repeatedly or to an absurd extent", example: "For more than an hour, the boring speaker belabored his point about the challenge of foreign competition." },
+{ word: "Beleaguer", meaning: "to surround; to besiege; to harass", example: "No one could leave the beleaguered city; the attacking army had closed off all the exits." },
+{ word: "Belie", meaning: "to give a false impression of; to contradict", example: "Melvin’s smile belied the grief he was feeling; despite his happy expression he was terribly sad inside." },
+{ word: "Belittle", meaning: "to make to seem little; to put someone down", example: "We worked hard to put out the fire, but the fire chief belittled our efforts by saying he wished he had brought some marshmallows." },
+{ word: "Belligerent", meaning: "combative; quarrelsome; waging war", example: "Al was so belligerent that the convention had the feel of a boxing match." },
+{ word: "Bemused", meaning: "confused; bewildered", example: "The two stood bemused in the middle of the parking lot at Disneyland, trying to remember where they had parked their car." },
+{ word: "Benefactor", meaning: "one who provides help, especially in the form of a gift or donation", example: "If your nextdoor neighbor rewrites his life insurance policy so that you will receive all his millions when he dies, then you become the beneficiary... if your neighbor dies, he is your benefactor." },
+{ word: "Benevolent", meaning: "generous; kind; doing good deeds", example: "Giving money to the poor is a benevolent act." },
+{ word: "Benign", meaning: "gentle; not harmful; kind; mild", example: "Karla has a benign personality; she is not at all unpleasant to be with." },
+{ word: "Bequest", meaning: "something left to someone in a will", example: "If your nextdoor neighbor leaves you all his millions in a will, the money is a bequest from him to you." },
+{ word: "Bereaved", meaning: "deprived or left desolate, especially through death", example: "The new widow was still bereaved when we saw her." },
+{ word: "Beset", meaning: "to harass; to surround", example: "The bereaved widow was beset by grief." },
+{ word: "Blasphemy", meaning: "irreverence; an insult to something held sacred; profanity", example: "In the strictest sense, to commit blasphemy is to say nasty, insulting things about God." },
+{ word: "Blatant", meaning: "unpleasantly or offensively noisy; glaring", example: "David was blatantly critical of our efforts; that is, he was noisy and obnoxious in making his criticisms." },
+{ word: "Blight", meaning: "a disease in plants; anything that injures or destroys", example: "An early frost proved a blight to the citrus crops last year, so we had no orange juice for breakfast." },
+{ word: "Blithe", meaning: "carefree; cheerful", example: "The blithe birds in the garden were making so much noise that Jamilla began to think about the shotgun in the attic." },
+{ word: "Bourgeois", meaning: "middle class, usually in a pejorative sense; boringly conventional", example: "A hip young city dweller might reject life in the suburbs as being too bourgeois." },
+{ word: "Bovine", meaning: "cow related; cowlike", example: "Cows are bovine, obviously; eating grass is a bovine concern." },
+{ word: "Brevity", meaning: "briefness", example: "The audience was deeply grateful for the brevity of the afterdinner speaker’s remarks." },
+{ word: "Broach", meaning: "to open up a subject for discussion, often a delicate subject", example: "Henrietta was proud of her new dress, so no one knew how to broach the subject with her of how silly grandmothers look in leather." },
+{ word: "Bucolic", meaning: "charmingly rural; rustic; countrylike", example: "The changing of the autumn leaves, old stone walls, distant views, and horses grazing in green meadows are examples of bucolic splendor." },
+{ word: "Bureaucracy", meaning: "a system of government administration consisting of numerous bureaus or offices, especially one run according to inflexible and inefficient rules; any large administrative system characterized by inefficiency, lots of rules, and red tape", example: "The Department of Motor Vehicles is a bureaucracy." },
+{ word: "Burgeon", meaning: "to expand; to flourish", example: "The burgeoning weeds in our yard soon overwhelmed the grass." },
+{ word: "Burlesque", meaning: "a ludicrous, mocking, lewd imitation", example: "Vaudeville actors frequently performed burlesque works on the stage." },
+{ word: "Cacophony", meaning: "harshsounding mixture of words, voices, or sounds", example: "The parade’s two marching bands played simultaneously; the resulting cacophony drove many spectators to tears." },
+{ word: "Cadence", meaning: "rhythm; the rise and fall of sounds", example: "We wished the tone of Irwin’s words would have a more pleasing cadence, but he spoke in a dull monotone." },
+{ word: "Cajole", meaning: "to persuade someone to do something he or she doesn’t want to do", example: "I didn’t want to give the speech, but Enrique cajoled me into doing it by telling me what a good speaker I am." },
+{ word: "Callow", meaning: "immature", example: "The patient was alarmed by the callowness of the medical staff." },
+{ word: "Candor", meaning: "truthfulness; sincere honesty", example: "My best friend exhibited candor when he told me that for many years now he has believed me to be a jerk." },
+{ word: "Capitalism", meaning: "an economic system in which businesses are privately owned", example: "Capitalism is an economic system based on private ownership." },
+{ word: "Capitulate", meaning: "to surrender; to give up or give in", example: "On the twentieth day of the strike, the workers capitulated and went back to work without a new contract." },
+{ word: "Capricious", meaning: "unpredictable; likely to change at any moment", example: "Arjun was capricious. One minute he said his favorite car was a Volkswagen Jetta; the next minute he said it was a Passat." },
+{ word: "Caricature", meaning: "a portrait or description that uses exaggeration to bring out the hidden character of its subject", example: "A caricature uses exaggeration to bring out the hidden character of its subject." },
+{ word: "Castigate", meaning: "to criticize severely; to chastise", example: "Jose’s motherinlaw castigated him for forgetting to pick her up at the airport." },
+{ word: "Catalyst", meaning: "in chemistry, something that changes the rate of a chemical reaction without itself being changed; anyone or anything that makes something happen without being directly involved in it", example: "When the mad scientist dropped a few grains of the catalyst into his test tube, the bubbling liquid began to boil furiously." },
+{ word: "Categorical", meaning: "unconditional; absolute", example: "Crooked politicians often make categorical denials of various charges against them." },
+{ word: "Catharsis", meaning: "purification that brings emotional relief or renewal", example: "To someone with psychological problems, talking to a psychiatrist can lead to a catharsis." },
+{ word: "Catholic", meaning: "universal; embracing everything", example: "Da Vinci was a catholic genius who excelled at everything he did." },
+{ word: "Caustic", meaning: "like acid; corrosive", example: "The caustic detergent ate right through Henry’s laundry." },
+{ word: "Celibacy", meaning: "abstinence from sex", example: "Celibacy is one of the requirements for Catholic priesthood." },
+{ word: "Censure", meaning: "to condemn severely for doing something bad", example: "The Senate sometimes censures senators for breaking laws or engaging in behavior unbecoming to an elected official." },
+{ word: "Cerebral", meaning: "brainy; intellectually refined", example: "Sebastian was too cerebral to be a baseball announcer; he kept talking about the existentialism of the outfield." },
+{ word: "Chagrin", meaning: "humiliation; embarrassed disappointment", example: "Much to my chagrin, I began to giggle during the eulogy at the funeral." },
+{ word: "Charisma", meaning: "a magicalseeming ability to attract followers or inspire loyalty", example: "The glamorous presidential candidate had a lot of charisma; voters didn’t seem to support him so much as be entranced by him." },
+{ word: "Charlatan", meaning: "fraud; quack; con man", example: "Buck was selling what he claimed was a cure for cancer, but he was just a charlatan." },
+{ word: "Chasm", meaning: "a deep, gaping hole; a gorge", example: "Mark was so stupid that his girlfriend wondered whether there wasn’t a chasm where his brain should be." },
+{ word: "Chastise", meaning: "to inflict punishment on; to discipline", example: "Mother chastised us for firing our bottle rockets through the livingroom window." },
+{ word: "Chicanery", meaning: "trickery; deceitfulness; artifice, especially legal or political", example: "Political news would be dull were it not for the chicanery of our elected officials." },
+{ word: "Chimera", meaning: "an illusion; a foolish fancy", example: "Jie’s dream of becoming a movie star was just a chimera." },
+{ word: "Choleric", meaning: "hottempered; quick to anger", example: "The choleric watchdog would sink his teeth into anyone who came within biting distance of his doghouse." },
+{ word: "Chronic", meaning: "constant; lasting a long time; inveterate", example: "DJ’s chronic back pains often kept him from football practice, but the postgame internal bleeding lasted only a day." },
+{ word: "Chronicle", meaning: "a record of events in order of time; a history", example: "Sally’s diary provided her mother with a detailed chronicle of her daughter’s extracurricular activities." },
+{ word: "Circuitous", meaning: "roundabout; not following a direct path", example: "The circuitous bus route between the two cities went here, there, and everywhere, and it took an extremely long time to get anywhere." },
+{ word: "Circumlocution", meaning: "an indirect expression; use of wordy or evasive language", example: "The lawyer’s circumlocution left everyone in the courtroom wondering what had been said." },
+{ word: "Circumscribe", meaning: "to draw a line around; to set the limits; to define; to restrict", example: "The Constitution clearly circumscribes the restrictions that can be placed on our personal freedoms." },
+{ word: "Circumspect", meaning: "cautious", example: "As a public speaker, Nick was extremely circumspect; he always took great care not to say the wrong thing or give offense." },
+{ word: "Circumvent", meaning: "to frustrate as though by surrounding", example: "Our hopes for an early end of the meeting were circumvented by the chairperson’s refusal to deal with the items on the agenda." },
+{ word: "Civil", meaning: "polite; civilized; courteous", example: "Our dinner guests conducted themselves civilly when we told them we weren’t going to serve them dinner after all." },
+{ word: "Clemency", meaning: "mercy; forgiveness; mildness", example: "The governor committed an act of clemency when he released all the convicts from the state penitentiary." },
+{ word: "Cliché", meaning: "an overused saying or idea", example: "The expression “you can’t judge a book by its cover” is a cliché; it’s been used so many times, that freshness has been worn away." },
+{ word: "Clique", meaning: "an exclusive group bound together by some shared quality or interest", example: "The high school newspaper staff was a real clique; they all hung out together and wouldn’t talk to anyone else." },
+{ word: "Coalesce", meaning: "to come together as one; to fuse; to unite", example: "When the dough coalesced into a big black blob, we began to wonder whether the cookies would be edible." },
+{ word: "Coerce", meaning: "to force someone to do or not to do something", example: "Darth Vader tried flattery, Darth Vader tried gifts, Darth Vader even tried to coerce, but Darth Vader was never able to make Han Solo reveal the hidden rebel base." },
+{ word: "Cogent", meaning: "powerfully convincing", example: "Shaft was cogent in explaining why he needed the confidential files, so we gave them to him." },
+{ word: "Cognitive", meaning: "dealing with how we know the world around us through our senses; mental", example: "Scientists study the cognitive apparatus of human beings to pattern how computers should gather information about the world." },
+{ word: "Cognizant", meaning: "aware; conscious", example: "Al was cognizant of the dangers of sword swallowing, but he tried it anyway and hurt himself quite badly." },
+{ word: "Coherent", meaning: "holding together; making sense", example: "After puzzling over Grace’s disorganized Holy Roman Empire essay for almost an hour, Ms. Fabricius needed only twenty minutes to read Arjun’s coherent paper on the Defenestration of Prague." },
+{ word: "Colloquial", meaning: "conversational; informal in language", example: "“The way I figure it” is a colloquial expression, or a colloquialism; People often say it but it isn’t used in formal prose." },
+{ word: "Collusion", meaning: "conspiracy; secret cooperation", example: "The increase in oil prices was the result of collusion by the oilproducing nations." },
+{ word: "Commensurate", meaning: "equal; proportionate", example: "Ryan’s salary is commensurate with his ability; like his ability, his salary is small." },
+{ word: "Compelling", meaning: "forceful; causing to yield", example: "A compelling argument for buying a digital video recorder is one that makes you go out and buy a digital video recorder." },
+{ word: "Compendium", meaning: "a summary; an abridgment", example: "A yearbook often contains a compendium of the offenses, achievements, and future plans of the members of the senior class." },
+{ word: "Complacent", meaning: "selfsatisfied; overly pleased with oneself; contented to a fault", example: "The complacent camper paid no attention to the bear prowling around his campsite, and the bear ate him up." },
+{ word: "Complement", meaning: "to complete or fill up; to be the perfect counterpart", example: "The flower arrangement complemented the table decorations." },
+{ word: "Complicity", meaning: "participation in wrongdoing; the act of being an accomplice", example: "There was complicity between the bank robber and the dishonest teller." },
+{ word: "Comprehensive", meaning: "covering or including everything", example: "The insurance policy was comprehensive; it covered all possible losses." },
+{ word: "Comprise", meaning: "to consist of", example: "A football team comprises eleven players on offense and eleven players on defense." },
+{ word: "Conciliatory", meaning: "making peace; attempting to resolve a dispute through goodwill", example: "The formerly warring countries were conciliatory at the treaty conference." },
+{ word: "Concise", meaning: "brief and to the point; succinct", example: "The scientist’s explanation was concise; it was brief and it helped us understand the difficult concept." },
+{ word: "Concord", meaning: "harmony; agreement", example: "Nations that live in concord are nations that live together in peace." },
+{ word: "Concurrent", meaning: "happening at the same time; parallel", example: "The criminal was sentenced to two concurrent fifteenyear sentences; the sentences will run at the same time, and he will be out of jail in fifteen years." },
+{ word: "Condescend", meaning: "to stoop to someone else’s level, usually in an offensive way; to patronize", example: "I was surprised that the president of the company had condescended to talk with me, a mere temporary employee." },
+{ word: "Condone", meaning: "to overlook; to permit to happen", example: "The principal condoned the hoods’ smoking in the bathroom; he simply ignored it." },
+{ word: "Conducive", meaning: "promoting", example: "The chairs in the library are conducive to sleep. If you sit in them to study, you will fall asleep." },
+{ word: "Confluence", meaning: "a flowing together, especially of rivers; the place where they begin to flow together", example: "The confluence of the Missouri and Mississippi rivers is at St. Louis; that’s the place where they join together." },
+{ word: "Congenial", meaning: "agreeably suitable; pleasant", example: "The little cabin in the woods was congenial to the writer; he was able to get a lot of writing done there." },
+{ word: "Congenital", meaning: "describing a trait or condition acquired between conception and birth; innate", example: "A congenital birth defect is one that is present at birth but was not caused by one’s genes." },
+{ word: "Congregate", meaning: "to come together", example: "Protestors were granted permission to congregate peacefully on the plaza." },
+{ word: "Conjecture", meaning: "to guess; to deduce or infer on slight evidence", example: "If forced to conjecture, I would say the volcano will erupt in twentyfour hours." },
+{ word: "Conjure", meaning: "to summon or bring into being as if by magic", example: "The chef conjured (or conjured up) a fabulous gourmet meal using nothing more than the meager ingredients in Lucy’s kitchen." },
+{ word: "Connoisseur", meaning: "an expert, particularly in matters of art or taste", example: "The artist’s work was popular, but connoisseurs rejected it as amateurish." },
+{ word: "Consecrate", meaning: "to make or declare sacred", example: "The Veterans Day speaker said that the battlefield had been consecrated by the blood of the soldiers who had died there." },
+{ word: "Consensus", meaning: "unanimity or general agreement", example: "When there is a consensus, everybody feels the same way." },
+{ word: "Consonant", meaning: "harmonious; in agreement", example: "Our desires were consonant with theirs; we all wanted the same thing." },
+{ word: "Construe", meaning: "to interpret", example: "Preston construed his contract as giving him the right to do anything he wanted." },
+{ word: "Consummate", meaning: "perfect; complete; supremely skillful", example: "A consummate pianist is an extremely good one." },
+{ word: "Contentious", meaning: "argumentative; quarrelsome", example: "Liz figured that her contentious style would make her a perfect litigator." },
+{ word: "Contiguous", meaning: "side by side; adjoining", example: "Two countries that share a border are contiguous; so are two events that happened one right after the other." },
+{ word: "Contingent", meaning: "dependent; possible", example: "Our agreement to buy their house is contingent upon the sellers’ finding another house to move into." },
+{ word: "Contrite", meaning: "admitting guilt; especially feeling remorseful", example: "Mira was contrite about her mistake, so we forgave her." },
+{ word: "Contrived", meaning: "artificial; labored", example: "Sam’s acting was contrived: No one in the audience believed his character or enjoyed his performance." },
+{ word: "Conventional", meaning: "common; customary; unexceptional", example: "The architect’s conventional designs didn’t win him awards for originality." },
+{ word: "Convivial", meaning: "fond of partying; festive", example: "A convivial gathering is one in which the people present enjoy eating, drinking, and being together." },
+{ word: "Copious", meaning: "abundant; plentiful", example: "The champagne at the wedding reception was copious but not very good." },
+{ word: "Corollary", meaning: "something that follows; a natural consequence", example: "Bloodshed and death are corollaries of any declaration of war." },
+{ word: "Corroborate", meaning: "to confirm; to back up with evidence", example: "I knew my statement was correct when my colleague corroborated it." },
+{ word: "Cosmopolitan", meaning: "at home in many places or situations; internationally sophisticated", example: "Marcello’s interests were cosmopolitan—he liked Greek wine, German beer, Dutch cheese, Japanese cars, and French fries." },
+{ word: "Countenance", meaning: "face; facial expression, especially an encouraging one", example: "His father’s confident countenance gave Lou the courage to persevere." },
+{ word: "Coup", meaning: "a brilliant victory or accomplishment; the violent overthrow of a government by a small internal group", example: "Winning a gold medal at the Olympics was a real coup for the skinny, sickly, fiftyyearold man." },
+{ word: "Covenant", meaning: "a solemn agreement; a contract; a pledge", example: "The warring tribes made a covenant not to fight each other anymore." },
+{ word: "Covert", meaning: "secret; hidden", example: "A covert military operation is one the public knows nothing about." },
+{ word: "Covet", meaning: "to wish for enviously", example: "To covet thy neighbor’s wife is to want thy neighbor’s wife for thyself." },
+{ word: "Credulous", meaning: "eager to believe; gullible", example: "The credulous housewife believed that she had won a million dollars from Publishers Clearing House." },
+{ word: "Criterion", meaning: "standard; basis for judgment", example: "When Norm judges a meal, he has only one criterion: Is it edible?" },
+{ word: "Cryptic", meaning: "mysterious; mystifying", example: "Elaine’s remarks were cryptic; Jerry was baffled by what she said." },
+{ word: "Culinary", meaning: "relating to cooking or the kitchen", example: "Allison pursued her culinary interests by attending the culinary institute." },
+{ word: "Culminate", meaning: "to climax; to reach full effect", example: "Connie’s years of practice culminated in a great victory at the international juggling championship." },
+{ word: "Culpable", meaning: "deserving blame; guilty", example: "The accountant’s failure to spot the errors made him culpable in the taxfraud case." },
+{ word: "Cursory", meaning: "hasty; superficial", example: "To give a book a cursory reading is to skim it quickly without comprehending much." },
+{ word: "Curtail", meaning: "to shorten; to cut short", example: "The vet curtailed his effort to cut the cat’s tail with the lawn mower." },
+{ word: "Cynic", meaning: "one who deeply distrusts human nature; one who believes humans are motivated only by selfishness", example: "When the pop star gave a million dollars to the museum, cynics said he was merely trying to buy himself a reputation as a cultured person." },
+{ word: "Daunt", meaning: "to make fearful; to intimidate", example: "The steepness of the mountain daunted the team of amateur climbers, who hadn’t realized what they were in for." },
+{ word: "Dearth", meaning: "lack; scarcity", example: "There is no dearth of comedy at a convention of clowns." },
+{ word: "Debacle", meaning: "violent breakdown; sudden overthrow; overwhelming defeat", example: "A political debate would become a debacle if the candidates began screaming and throwing dinner rolls at each other." },
+{ word: "Debauchery", meaning: "wild living; excessive intemperance", example: "Debauchery can be expensive; fortunately for Jeff, his wallet matched his appetite for extravagant pleasures." },
+{ word: "Debilitate", meaning: "to weaken; to cripple", example: "The football player’s career was ended by a debilitating injury to his knee." },
+{ word: "Decadent", meaning: "decaying or decayed, especially in terms of morals", example: "Carousing in local bars instead of going to class is decadent." },
+{ word: "Decimate", meaning: "to kill or destroy a large part of", example: "When locusts attack a crop, they sometimes decimate it, leaving very little that’s fit for human consumption." },
+{ word: "Decorous", meaning: "proper; in good taste; orderly", example: "The New Year’s Eve crowd was relatively decorous until midnight, when they went wild." },
+{ word: "Deduce", meaning: "to conclude from the evidence; to infer", example: "From the footprints on the ground, Clarice deduced that the criminal had feet." },
+{ word: "Defame", meaning: "to libel or slander; to ruin the good name of", example: "The local businessman accused the newspaper of defaming him by publishing an article that said his company was poorly managed." },
+{ word: "Deference", meaning: "submission to another’s will; respect; courtesy", example: "Dean showed deference to his grandfather: He let the old man have first dibs on the birthday cake." },
+{ word: "Definitive", meaning: "conclusive; providing the last word", example: "Walter wrote the definitive biography of Keats; nothing more could have been added by another book." },
+{ word: "Degenerate", meaning: "to break down; to deteriorate", example: "The discussion quickly degenerated into an argument." },
+{ word: "Deleterious", meaning: "harmful", example: "Smoking cigarettes is deleterious to your health." },
+{ word: "Delineate", meaning: "to describe accurately; to draw in outline", example: "After Jack had delineated his plan, we had no doubt about what he intended to do." },
+{ word: "Delude", meaning: "to deceive", example: "The con man deluded us into thinking that he would make us rich." },
+{ word: "Deluge", meaning: "a flood; an inundation", example: "The \$1 million reward for the lost poodle brought in a deluge of hot leads." },
+{ word: "Demagogue", meaning: "a leader of the people, but more a rabble-rouser", example: "A demagogue manipulates the public to support his aims, but he is little different from a dictator." },
+{ word: "Denizen", meaning: "inhabitant", example: "To be a denizen of a restaurant is to go there often—so often that people begin to wonder whether you live there." },
+{ word: "Depravity", meaning: "extreme wickedness or corruption", example: "Mrs. Prudinkle wondered whether the depravity of her class of eight-year-olds was the result of their watching Saturday morning television." },
+{ word: "Deprecate", meaning: "to express disapproval of", example: "The critic’s deprecating comments about my new novel put me in a bad mood for an entire month." },
+{ word: "Deride", meaning: "to ridicule; to laugh at contemptuously", example: "Geraldo derided Diana’s driving ability after their hair-raising trip down the twisting mountain road." },
+{ word: "Derogatory", meaning: "disapproving; degrading", example: "Stephen could never seem to think of anything nice to say about anyone; virtually all of his comments were derogatory." },
+{ word: "Desiccate", meaning: "to dry out", example: "The hot wind desiccated the few grapes remaining on the vine; after a day or two, they looked like raisins." },
+{ word: "Despondent", meaning: "extremely depressed; full of despair", example: "The cook became despondent when the wedding cake exploded fifteen minutes before the reception." },
+{ word: "Despot", meaning: "an absolute ruler; an autocrat", example: "Stephen was a despot; workers who disagreed with him were fired." },
+{ word: "Destitute", meaning: "extremely poor; utterly lacking", example: "Destitute people are people without money or possessions, or with very little money and very few possessions." },
+{ word: "Desultory", meaning: "without a plan or purpose; disconnected; random", example: "Aadi made a few desultory attempts to start a garden, but nothing came of them." },
+{ word: "Dextrous", meaning: "skillful; adroit", example: "Though not imposing in stature, Rashid was the most dextrous basketball player on the court." },
+{ word: "Dialectical", meaning: "relating to discussions; relating to the rules and methods of reasoning; approaching truth in the middle of opposing extremes", example: "The game of Twenty Questions is dialectical, in that the participants attempt to narrow down a chosen object by asking a series of ever more specific questions." },
+{ word: "Dictum", meaning: "an authoritative saying; an adage; a maxim; a proverb", example: "“No pain, no gain” is a hackneyed dictum of sadistic coaches everywhere." },
+{ word: "Didactic", meaning: "intended to teach; morally instructive; pedantic", example: "Luther’s seemingly amusing talk had a didactic purpose; he was trying to show his listeners the difference between right and wrong." },
+{ word: "Diffident", meaning: "timid; lacking in self-confidence", example: "The diffident student never made a single comment in class." },
+{ word: "Digress", meaning: "to stray from the main subject", example: "When a speaker digresses, he departs from the main topic and tells a story only distantly related to it." },
+{ word: "Dilettante", meaning: "someone with superficial knowledge of the arts; an amateur; a dabbler", example: "Reginald said he was an artist, but he was merely a dilettante; he didn’t know a pencil from a paintbrush." },
+{ word: "Discern", meaning: "to have insight; to see things clearly; to discriminate; to differentiate", example: "The ill-mannered people at Tisha’s party proved that she had little discernment when it came to choosing friends." },
+{ word: "Discreet", meaning: "prudent; judiciously reserved", example: "The psychiatrist was very discreet; no matter how much we pestered him, he wouldn’t gossip about the problems of his famous patients." },
+{ word: "Discrete", meaning: "unconnected; separate; distinct", example: "The twins were identical but their personalities were discrete." },
+{ word: "Discriminate", meaning: "to notice or point out the difference between two or more things; to discern; to differentiate", example: "A person with a refined aesthetic sense is able to discriminate subtle differences where a less observant person would see nothing." },
+{ word: "Disdain", meaning: "arrogant scorn; contempt", example: "Bertram viewed the hot dog with disdain, believing that to eat such a disgusting food was beneath him." },
+{ word: "Disinterested", meaning: "not taking sides; unbiased", example: "An umpire should be disinterested; he should not care which team wins." },
+{ word: "Disparage", meaning: "to belittle; to say uncomplimentary things about, usually in a somewhat indirect way", example: "The mayor disparaged our efforts to beautify the town square by saying that the flower bed we had planted looked somewhat worse than the bed of weeds it had replaced." },
+{ word: "Disparate", meaning: "different; incompatible; unequal", example: "Our interests were disparate: Cathy liked to play with dolls and I liked to throw her dolls out the window." },
+{ word: "Disseminate", meaning: "to spread the seeds of something; to scatter; to make widely known", example: "News is disseminated through many media: radio, television, newspapers, magazines, and gossips." },
+{ word: "Dissipate", meaning: "to thin out, drift away, or dissolve; to cause to thin out, drift away, or dissolve; to waste or squander", example: "The smoke dissipated as soon as we opened the windows." },
+{ word: "Dissolution", meaning: "the breaking up or dissolving of something into parts; disintegration", example: "Nothing could prevent the dissolution of the Jesse Ventura Fan Club after he retired to seek a political career." },
+{ word: "Distend", meaning: "to swell; to extend a great deal", example: "The tire distended alarmingly as the forgetful gas station attendant kept pumping more and more air into it." },
+{ word: "Distinguish", meaning: "to tell apart; to cause to stand out", example: "The rodent expert’s eyesight was so acute that he was able to distinguish between a shrew and a vole at more than a thousand paces." },
+{ word: "Docile", meaning: "easily taught; obedient; easy to handle", example: "The docile students quietly memorized all the lessons their teacher told them." },
+{ word: "Doctrinaire", meaning: "inflexibly committed to a doctrine or theory without regard to its practicality; dogmatic", example: "A doctrinaire supporter of manned space flights to Pluto would be someone who supported such space flights even though it might be shown that such lengthy journeys could never be undertaken." },
+{ word: "Dogmatic", meaning: "arrogantly assertive of unproven ideas; stubbornly claiming that something is beyond dispute", example: "The opinions or ideas dogmatically asserted by a dogmatic person are known collectively as dogma." },
+{ word: "Domestic", meaning: "having to do with the household or family; not foreign", example: "A home that enjoys domestic tranquillity is a happy home." },
+{ word: "Dormant", meaning: "inactive; as though asleep; asleep", example: "Mt. Vesuvius erupted violently and then fell dormant for several hundred years." },
+{ word: "Dubious", meaning: "full of doubt; uncertain", example: "I was fairly certain that I would be able to fly if I could merely flap my arms hard enough, but Mary was dubious; she said I’d better flap my legs as well." },
+{ word: "Duplicity", meaning: "the act of being two-faced; double-dealing; deception", example: "Dave, in his duplicity, told us he wasn’t going to rob the bank and then went right out and robbed it." },
+{ word: "Ebullient", meaning: "boiling; bubbling with excitement; exuberant", example: "Cammie was ebullient when her fairy godmother said she could use one of her three wishes to wish for three more wishes." },
+{ word: "Eccentric", meaning: "not conventional; a little kooky; irregular", example: "The eccentric inventor spent all his waking hours fiddling with what he said was a time machine but was actually just an old telephone booth." },
+{ word: "Eclectic", meaning: "choosing the best from many sources; drawn from many sources", example: "Adolfo’s taste in art was eclectic. He liked the Old Masters, the Impressionists, and Walt Disney." },
+{ word: "Edify", meaning: "to enlighten; to instruct, especially in moral or religious matters", example: "The teacher’s goal was to edify her students, not to force a handful of facts down their throats." },
+{ word: "Efface", meaning: "to erase; to rub away the features of", example: "The inscription on the tombstone had been effaced by centuries of weather." },
+{ word: "Effusion", meaning: "a pouring forth", example: "When the child was rescued from the well, there was an intense effusion of emotion from the crowd that had gathered around the hole." },
+{ word: "Egalitarian", meaning: "believing in the social and economic equality of all people", example: "People often lose interest in egalitarian measures when such measures interfere with their own interests." },
+{ word: "Egocentric", meaning: "selfish; believing that one is the center of everything", example: "Nevitt was so egocentric that he could never give anyone else credit for doing anything." },
+{ word: "Egregious", meaning: "extremely bad; flagrant", example: "Erik’s manners were egregious; he ate his mashed potatoes with his fingers and slurped the peas right off his plate." },
+{ word: "Elicit", meaning: "to bring out; to call forth", example: "The interviewer skillfully elicited our true feelings by asking us questions that got to the heart of the matter." },
+{ word: "Elliptical", meaning: "oval; missing a word or words; obscure", example: "The orbit of the earth is not perfectly round; it is elliptical." },
+{ word: "Elusive", meaning: "hard to pin down; evasive", example: "The elusive criminal was next to impossible for the police to catch." },
+{ word: "Emigrate", meaning: "to leave a country permanently; to expatriate", example: "Pierre emigrated from France because he had grown tired of speaking French." },
+{ word: "Eminent", meaning: "wellknown and respected; standing out from all others in quality or accomplishment; outstanding", example: "The entire audience fell silent when the eminent musician walked onto the stage and picked up his banjo and bongo drums." },
+{ word: "Empirical", meaning: "relying on experience or observation; not merely theoretical", example: "The appledropping experiment gave the scientists empirical evidence that gravity exists." },
+{ word: "Emulate", meaning: "to strive to equal or excel, usually through imitation", example: "The American company emulated its successful Japanese competitor but never quite managed to do as well." },
+{ word: "Encroach", meaning: "to make gradual or stealthy inroads into; to trespass", example: "As the city grew, it encroached on the countryside surrounding it." },
+{ word: "Endemic", meaning: "native; restricted to a particular region or era; indigenous", example: "You won’t find that kind of tree in California; it’s endemic to our part of the country." },
+{ word: "Enervate", meaning: "to reduce the strength or energy of, especially to do so gradually", example: "Sander felt enervated by his long ordeal and couldn’t make himself get out of bed." },
+{ word: "Enfranchise", meaning: "to grant the privileges of citizenship, especially the right to vote", example: "N/A" },
+{ word: "Engender", meaning: "to bring into existence; to create; to cause", example: "Smiles engender smiles." },
+{ word: "Enigma", meaning: "a mystery", example: "Ben is an enigma; he never does any homework but he always gets good grades." },
+{ word: "Enormity", meaning: "extreme evil; a hideous offense; immensity", example: "Hitler’s soldiers stormed through the village, committing one enormity after another." },
+{ word: "Ephemeral", meaning: "lasting a very short time", example: "Youth and flowers are both ephemeral." },
+{ word: "Epigram", meaning: "a brief and usually witty or satirical saying", example: "N/A" },
+{ word: "Epitome", meaning: "a brief summary that captures the meaning of the whole; the perfect example of something; a paradigm", example: "Luke’s freshman year was the epitome of a college experience; he made friends, joined a fraternity, and ate too much pizza." },
+{ word: "Equanimity", meaning: "composure; calm", example: "The entire apartment building was crumbling, but Rachel faced the disaster with equanimity." },
+{ word: "Equitable", meaning: "fair", example: "King Solomon’s decision was certainly equitable; each mother would receive half the child." },
+{ word: "Equivocal", meaning: "ambiguous; intentionally confusing; capable of being interpreted in more than one way", example: "Joe’s response was equivocal; we couldn’t tell whether he meant yes or no, which is precisely what Joe wanted." },
+{ word: "Erudite", meaning: "scholarly; deeply learned", example: "The erudite biologist was viewed by many of his colleagues as a likely winner of the Nobel Prize." },
+{ word: "Esoteric", meaning: "hard to understand; understood by only a select few; peculiar", example: "Chicken wrestling and underwater yodeling were just two of Earl’s esoteric hobbies." },
+{ word: "Espouse", meaning: "to support; to advocate", example: "Alex espoused so many causes that he sometimes had trouble remembering which side he was on." },
+{ word: "Ethereal", meaning: "heavenly; as light and insubstantial as a gas or ether", example: "The ethereal mist on the hillside was delicate and beautiful." },
+{ word: "Euphemism", meaning: "a pleasant or inoffensive expression used in place of an unpleasant or offensive one", example: "\"Taking the big bus uptown\" was her euphemism for dying." },
+{ word: "Evanescent", meaning: "fleeting; vanishing; happening for only the briefest period", example: "Meteors are evanescent: They last so briefly that it is hard to tell whether one has actually appeared." },
+{ word: "Exacerbate", meaning: "to make worse", example: "Dipping Austin in lye exacerbated his skin condition." },
+{ word: "Exacting", meaning: "extremely demanding; difficult; requiring great skill or care", example: "The exacting math teacher subtracted points for even the most unimportant errors." },
+{ word: "Exalt", meaning: "to raise high; to glorify", example: "The manager decided to exalt the lowly batboy by asking him to pitch in the opening game of the World Series." },
+{ word: "Exasperate", meaning: "to annoy thoroughly; to make very angry; to try the patience of", example: "The child’s insistence on hopping backward on one foot exasperated his mother, who was in a hurry." },
+{ word: "Exemplify", meaning: "to illustrate by example; to serve as a good example", example: "His teacher thought Fred exemplified the model student." },
+{ word: "Exhaustive", meaning: "thorough; rigorous; complete; painstaking", example: "Before you use a parachute, you should examine it exhaustively for defects." },
+{ word: "Exhort", meaning: "to urge strongly; to give a serious warning to", example: "The coach used his bullhorn to exhort us to try harder." },
+{ word: "Exigency", meaning: "an emergency; an urgency", example: "You haven’t opened a book all term and the final is tomorrow morning." },
+{ word: "Existential", meaning: "having to do with existence; having to do with the body of thought called existentialism", example: "N/A" },
+{ word: "Exonerate", meaning: "to free completely from blame; to exculpate", example: "The defendant, who had always claimed he wasn’t guilty, expected to be exonerated by the testimony of his best friend." },
+{ word: "Expatriate", meaning: "to throw (someone) out of his or her native land; to move away from one’s native land; to emigrate", example: "Hugo was fed up with his native country and so expatriated to America." },
+{ word: "Expedient", meaning: "providing an immediate advantage; serving one’s immediate selfinterest; practical", example: "Since the basement had nearly filled with water, the plumber felt it would be expedient to clear out the drain." },
+{ word: "Expedite", meaning: "to speed up or ease the progress of", example: "The post office expedited mail delivery by hiring more letter carriers." },
+{ word: "Explicit", meaning: "clearly and directly expressed", example: "The machine’s instructions were explicit—they told us exactly what to do." },
+{ word: "Extol", meaning: "to praise highly; to laud", example: "The millionaire extolled the citizen who returned his gold watch and then rewarded him with a heartfelt handshake." },
+{ word: "Extraneous", meaning: "unnecessary; irrelevant; extra", example: "The book’s feeble plot was buried in a lot of extraneous material about a talking dog." },
+{ word: "Extrapolate", meaning: "to project or deduce from something known; to infer", example: "George’s estimates were extrapolated from last year’s data; he simply took all the old numbers and doubled them." },
+{ word: "Extricate", meaning: "to free from difficulty", example: "It took two and a half days to extricate the little girl from the abandoned well into which she had fallen." },
+{ word: "Extrovert", meaning: "an open, outgoing person; a person whose attention is focused on others rather than on himself or herself", example: "Maria was quite an extrovert; she walked boldly into the roomful of strange adults and struck up a friendly conversation." },
+{ word: "Exult", meaning: "to rejoice; to celebrate", example: "The women’s team exulted in its victory over the men’s team at the badminton finals." },
+{ word: "Fabrication", meaning: "a lie; something made up", example: "My story about being the prince of Wales was a fabrication. I’m really the king of Denmark." },
+{ word: "Facetious", meaning: "humorous; not serious; clumsily humorous", example: "David was sent to the principal’s office for making a facetious remark about the intelligence of the French teacher." },
+{ word: "Facile", meaning: "fluent; skillful in a superficial way; easy", example: "Paolo’s poems were facile rather than truly accomplished; if you read them closely, you soon realized they were filled with clichés." },
+{ word: "Faction", meaning: "a group, usually a small part of a larger group, united around some cause; disagreement within an organization", example: "At the Republican National Convention, the Bush faction spent much of its time shouting at the McCain faction." },
+{ word: "Farcical", meaning: "absurd; ludicrous", example: "The serious play quickly turned farcical when the leading man’s belt broke and his pants fell to his ankles." },
+{ word: "Fastidious", meaning: "meticulous; demanding; finicky", example: "Mrs. O’Hara was a fastidious housekeeper; she cleaned up our crumbs almost before they hit the floor." },
+{ word: "Fatalist", meaning: "someone who believes that future events are already determined and that humans are powerless to change them", example: "The old man was a fatalist about his illness, believing there was no sense in worrying about something over which he had no control." },
+{ word: "Fatuous", meaning: "foolish; silly; idiotic", example: "Pauline is so pretty that her suitors are often driven to fatuous acts of devotion." },
+{ word: "Fauna", meaning: "animals", example: "We saw little evidence of fauna on our walk through the woods." },
+{ word: "Fecund", meaning: "fertile; productive", example: "The fecund mother rabbit gave birth to hundreds and hundreds of little rabbits." },
+{ word: "Felicity", meaning: "happiness; skillfulness, especially at expressing things; adeptness", example: "Love was not all felicity for Judy and Steve; they argued all the time." },
+{ word: "Fervor", meaning: "great warmth or earnestness; ardor; zeal", example: "Avid baseball fans frequently display their fervor for the game by throwing food at bad players." },
+{ word: "Fetter", meaning: "to restrain; to hamper", example: "In his pursuit of the Nobel Prize for physics, Professor Jenkins was fettered by his near-total ignorance of the subject." },
+{ word: "Fidelity", meaning: "faithfulness; loyalty", example: "The crusader’s life was marked by fidelity to the cause of justice." },
+{ word: "Figurative", meaning: "based on figures of speech; expressing something in terms usually used for something else; metaphorical", example: "When the mayor said that the housing market had sprouted wings, he was speaking figuratively." },
+{ word: "Finesse", meaning: "skillful maneuvering; subtlety; craftiness", example: "The doctor sewed up the wound with finesse, making stitches so small one could scarcely see them." },
+{ word: "Flagrant", meaning: "glaringly bad; notorious; scandalous", example: "An example of a flagrant theft would be stealing a car from the parking lot of a police station." },
+{ word: "Flaunt", meaning: "to show off; to display ostentatiously", example: "The brand-new millionaire annoyed all his friends by driving around his old neighborhood to flaunt his new Rolls-Royce." },
+{ word: "Flout", meaning: "to disregard something out of disrespect", example: "A driver flouts the traffic laws by driving through red lights and knocking down pedestrians." },
+{ word: "Foible", meaning: "a minor character flaw", example: "Patti’s foibles included a tendency to prefer dogs to people." },
+{ word: "Foment", meaning: "to stir up; to instigate", example: "The bad news from abroad fomented pessimism among professional investors." },
+{ word: "Forbear", meaning: "to refrain from; to abstain", example: "Stephen told me I could become a millionaire if I joined him in his business, but his company makes me nervous so I decided to forbear." },
+{ word: "Forego", meaning: "to do without; to forbear", example: "We had some of the chocolate cake, some of the chocolate mousse, and some of the chocolate cream pie, but we were worried about our weight so we decided to forego the chocolate-covered potato chips." },
+{ word: "Forsake", meaning: "to abandon; to renounce; to relinquish", example: "We urged Buddy to forsake his life with the alien beings and return to his job at the drugstore." },
+{ word: "Fortuitous", meaning: "accidental; occurring by chance", example: "The program’s outcome was not the result of any plan but was entirely fortuitous." },
+{ word: "Founder", meaning: "to fail; to collapse; to sink", example: "The candidate’s campaign for the presidency foundered when it was revealed that he had once been married to a drug addict." },
+{ word: "Fraternal", meaning: "like brothers", example: "The fraternal feelings of the group were strengthened by the monthly fishing trips that were planned." },
+{ word: "Frenetic", meaning: "frantic; frenzied", example: "There was a lot of frenetic activity in the office, but nothing ever seemed to get accomplished." },
+{ word: "Frugal", meaning: "economical; penny-pinching", example: "Laura was so frugal that she even tried to bargain with the checkout girl at the supermarket." },
+{ word: "Furtive", meaning: "secretive; sly", example: "Cal wiggled his ears while the countess was talking to him in a furtive attempt to catch our attention." },
+{ word: "Futile", meaning: "useless; hopeless", example: "A D+ average and no extracurricular interests to speak of meant that applying to Harvard was futile, but Lucinda hoped against hope." },
+{ word: "Garrulous", meaning: "talkative; chatty", example: "Gabriella is gregarious and garrulous; she loves to hang out with the gang and gab." },
+{ word: "Gauche", meaning: "unskillful; awkward; maladroit", example: "Smadar had a poor sense of comic timing, and her gauche attempts to mock her lefthanded friends soon left her with none." },
+{ word: "Genre", meaning: "a type or category, especially of art or writing", example: "Daoyen displayed a great talent for a particular genre: the bawdy limerick." },
+{ word: "Genteel", meaning: "refined; polite; aristocratic; affecting refinement", example: "The ladies at the ball were too genteel to accept our invitation to the wrestling match." },
+{ word: "Gesticulate", meaning: "to make gestures, especially when speaking or in place of speaking", example: "Massimo gesticulated wildly on the other side of the theater in an attempt to get our attention." },
+{ word: "Glut", meaning: "surplus; an overabundance", example: "The international oil shortage turned into an international oil glut with surprising speed." },
+{ word: "Grandiloquent", meaning: "pompous; using a lot of big, fancy words in an attempt to sound impressive", example: "The president’s speech was grandiloquent rather than eloquent; there were some sixdollar words and some impressive phrases, but he really had nothing to say." },
+{ word: "Grandiose", meaning: "absurdly exaggerated", example: "The scientist’s grandiose plan was to build a huge shopping center on the surface of the moon." },
+{ word: "Gratuitous", meaning: "given freely (said of something bad); unjustified; unprovoked; uncalled for", example: "The scathing review of the movie contained several gratuitous remarks about the sex life of the director." },
+{ word: "Gravity", meaning: "seriousness", example: "The anchorman’s nervous giggling was entirely inappropriate, given the gravity of the situation." },
+{ word: "Gregarious", meaning: "sociable; enjoying the company of others", example: "Dirk was too gregarious to enjoy the fifty years he spent in solitary confinement." },
+{ word: "Guile", meaning: "cunning; duplicity; artfulness", example: "José used guile, not intelligence, to win the spelling bee; he cheated." },
+{ word: "Hackneyed", meaning: "overused; trite; stale", example: "Michael’s book was full of clichés and hackneyed phrases." },
+{ word: "Hapless", meaning: "unlucky", example: "Joe’s hapless search for fun led him from one disappointment to another." },
+{ word: "Harbinger", meaning: "a forerunner; a signal of", example: "Warm weather is the harbinger of spring." },
+{ word: "Hedonism", meaning: "the pursuit of pleasure as a way of life", example: "Yoshi’s life of hedonism came to an end when his lottery winnings ran out." },
+{ word: "Hegemony", meaning: "leadership, especially of one nation over another", example: "America once held an unchallenged nuclear hegemony." },
+{ word: "Heresy", meaning: "any belief that is strongly opposed to established beliefs", example: "Galileo was tried for the heresy of suggesting that the sun did not revolve around Earth." },
+{ word: "Hermetic", meaning: "impervious to external influence; airtight", example: "The president led a hermetic existence in the White House, as his advisers attempted to seal him off from the outside world." },
+{ word: "Heyday", meaning: "golden age; prime", example: "In his heyday, Vernon was a world-class athlete; today he’s just Vernon." },
+{ word: "Hiatus", meaning: "a break or interruption, often from work", example: "Spencer looked forward to spring break as a welcome hiatus from the rigors of campus parties." },
+{ word: "Hierarchy", meaning: "an organization based on rank or degree; pecking order", example: "Kendra was very low in the State Department hierarchy." },
+{ word: "Histrionic", meaning: "overly dramatic; theatrical", example: "Adele’s histrionic request for a raise embarrassed everyone in the office." },
+{ word: "Homily", meaning: "a sermon", example: "The football coach often began practice with a lengthy homily on the virtues of clean living." },
+{ word: "Homogeneous", meaning: "uniform; made entirely of one thing", example: "The kindergarten class was extremely homogeneous: All the children had blond hair, blue eyes, red shoes, and the same last name." },
+{ word: "Heterogeneous", meaning: "mixed or varied", example: "On Halloween the children amassed a heterogeneous collection of candy, chewing gum, popcorn, and cookies." },
+{ word: "Husbandry", meaning: "thrifty management of resources; livestock farming", example: "Everyone husbanded oil and electricity during the energy crisis of the 1970s." },
+{ word: "Hyperbole", meaning: "an exaggeration used as a figure of speech; exaggeration", example: "When Joe said, “I’m so hungry I could eat a horse,” he was using hyperbole to convey the extent of his hunger." },
+{ word: "Hypothetical", meaning: "uncertain; unproven", example: "There were several hypothetical explanations for the strange phenomenon, but no one could say for certain what had caused it." },
+{ word: "Iconoclast", meaning: "one who attacks popular beliefs or institutions", example: "The popular columnist was an inveterate iconoclast, avidly attacking public figures no matter what their party affiliations." },
+{ word: "Ideology", meaning: "a system of social or political ideas", example: "The candidate never managed to communicate his ideology to the voters, so few people were able to grasp what he stood for." },
+{ word: "Idiosyncrasy", meaning: "a peculiarity; an eccentricity", example: "Eating green beans drenched in ketchup for breakfast was one of Jordana’s idiosyncrasies." },
+{ word: "Idyllic", meaning: "charming in a rustic way; naturally peaceful", example: "They built their house on an idyllic spot. There was a babbling brook in back and an unbroken view of wooded hills in front." },
+{ word: "Ignominy", meaning: "deep disgrace", example: "After the big scandal, the formerly highflying investment banker fell into a life of shame and ignominy." },
+{ word: "Illicit", meaning: "illegal; not permitted", example: "Criminals engage in illicit activities." },
+{ word: "Immigrate", meaning: "to move permanently to a new country", example: "Edwin immigrated to Canada, thinking the move would give his twoyearold daughter a better shot at attending the University of Toronto preschool." },
+{ word: "Imminent", meaning: "just about to happen", example: "The pink glow in the east made it clear that sunrise was imminent." },
+{ word: "Immutable", meaning: "unchangeable", example: "Jerry’s mother had only one immutable rule: no dancing on the dinner table." },
+{ word: "Impartial", meaning: "fair; not favoring one side or the other; unbiased", example: "Jurors are supposed to be impartial rather than partial; they aren’t supposed to make up their minds until they’ve heard all the evidence." },
+{ word: "Impeccable", meaning: "flawless; entirely without sin", example: "The children’s behavior was impeccable; they didn’t pour dye into the swimming pool." },
+{ word: "Imperial", meaning: "like an emperor or an empire", example: "The palace was decorated with imperial splendor." },
+{ word: "Impervious", meaning: "not allowing anything to pass through; impenetrable", example: "A raincoat, if it is any good, is impervious to water." },
+{ word: "Impetuous", meaning: "impulsive; extremely impatient", example: "Impetuous Dick always seemed to be running off to buy a new car, even if he had just bought one the day before." },
+{ word: "Implement", meaning: "to carry out", example: "Leo developed a plan for shortening the grass in his yard, but he was unable to implement it because he didn’t have a lawn mower." },
+{ word: "Impotent", meaning: "powerless; helpless; unable to perform sexual intercourse", example: "Joe and Olga made a few impotent efforts to turn aside the steamroller, but it squished their vegetable garden anyway." },
+{ word: "Impugn", meaning: "to attack, especially to attack the truth or integrity of something", example: "The critic impugned the originality of Jacob’s novel, claiming that long stretches of it had been lifted from the work of someone else." },
+{ word: "Inane", meaning: "silly; senseless", example: "Their plan to make an indoor swimming pool by flooding their basement was inane." },
+{ word: "Inaugurate", meaning: "to begin officially; to induct formally into office", example: "The mayor inaugurated the new nosmoking policy and then celebrated by lighting up a big cigar." },
+{ word: "Incandescent", meaning: "brilliant; giving off heat or light", example: "Jan’s ideas were so incandescent that simply being near her made you feel as though you understood the subject for the first time." },
+{ word: "Incantation", meaning: "a chant; the repetition of statements or phrases in a way reminiscent of a chant", example: "Much to our delight, the wizard’s incantation eventually caused the small stone to turn into a sleek black BMW." },
+{ word: "Incense", meaning: "to make very angry", example: "Jeremy was incensed when I told him that even though he was stupid and loathsome, he would always be my best friend." },
+{ word: "Incessant", meaning: "unceasing", example: "I will go deaf and lose my mind if your children don’t stop the incessant bickering." },
+{ word: "Incipient", meaning: "beginning; emerging", example: "Sitting in class, Henrietta detected an incipient tingle of boredom that told her she would soon be asleep." },
+{ word: "Incisive", meaning: "cutting right to the heart of the matter", example: "Lloyd’s essays were always incisive; he never wasted any words, and his reasoning was sharp and persuasive." },
+{ word: "Incongruous", meaning: "not harmonious; not consistent; not appropriate; not fitting in", example: "The ultramodern kitchen seemed incongruous in the restored eighteenthcentury farmhouse." },
+{ word: "Incorrigible", meaning: "incapable of being reformed", example: "The convict was an incorrigible criminal; as soon as he got out of prison, he said, he was going to rob another doughnut store." },
+{ word: "Increment", meaning: "an increase; one in a series of increases", example: "Bernard received a small increment in his salary each year, even though he did less and less work with every day that passed." },
+{ word: "Indifferent", meaning: "not caring one way or the other; apathetic; mediocre", example: "Pedro was indifferent about politics; he didn’t care who was elected to office so long as no one passed a law against Monday night football." },
+{ word: "Indigenous", meaning: "native; originating in that area", example: "Fastfood restaurants are indigenous to America, where they were invented." },
+{ word: "Indigent", meaning: "poor", example: "The indigent family had little to eat, nothing to spend, and virtually nothing to wear." },
+{ word: "Indignant", meaning: "angry, especially as a result of something unjust or unworthy; insulted", example: "Ted became indignant when the policewoman accused him of stealing the nuclear weapon." },
+{ word: "Indolent", meaning: "lazy", example: "The indolent teenagers slept late, moped around, and never looked for summer jobs." },
+{ word: "Indulgent", meaning: "lenient; yielding to desire", example: "The nice mom was indulgent of her children, letting them have all the candy, cookies, and ice cream that they wanted, even for breakfast." },
+{ word: "Ineffable", meaning: "incapable of being expressed or described", example: "The simple beauty of nature is often so ineffable that it brings tears to our eyes." },
+{ word: "Inept", meaning: "clumsy; incompetent; gauche", example: "Joshua is an inept dancer; he is as likely to stomp on his partner’s foot as he is to step on it." },
+{ word: "Inert", meaning: "inactive; sluggish; not reacting chemically", example: "Helium is an inert gas: It doesn’t burn, it doesn’t explode, and it doesn’t kill you if you inhale it." },
+{ word: "Inexorable", meaning: "relentless; inevitable; unavoidable", example: "The inexorable waves pounded the shore, as they have always pounded it and as they always will pound it." },
+{ word: "Infamous", meaning: "shamefully wicked; having an extremely bad reputation; disgraceful", example: "Deep within the prison was the infamous torture chamber, where hooded guards tickled their prisoners with feathers until they confessed." },
+{ word: "Infatuated", meaning: "foolish; foolishly passionate or attracted; made foolish; foolishly in love", example: "I was so infatuated with Polly that I drooled and gurgled whenever she was near." },
+{ word: "Infer", meaning: "to conclude; to deduce", example: "Raizel said she loved the brownies, but I inferred from the size of the piece left on her plate that she had actually despised them." },
+{ word: "Infinitesimal", meaning: "very, very, very small; infinitely small", example: "Our chances of winning were infinitesimal, but we played our hearts out anyway." },
+{ word: "Ingenuous", meaning: "frank; without deception; simple; artless; charmingly naive", example: "A young child is ingenuous; he doesn’t know much about the ways of the world, and certainly not enough to deceive anyone." },
+{ word: "Inherent", meaning: "part of the essential nature of something; intrinsic", example: "Wetness is an inherent quality of water." },
+{ word: "Injunction", meaning: "a command or order, especially a court order", example: "Wendy’s neighbors got a court injunction prohibiting her from playing her radio." },
+{ word: "Innate", meaning: "existing since birth; inborn; inherent", example: "Joseph’s kindness was innate; it was part of his natural character." },
+{ word: "Innocuous", meaning: "harmless; banal", example: "The speaker’s voice was loud but his words were innocuous; there was nothing to get excited about." },
+{ word: "Inordinate", meaning: "excessive; unreasonable", example: "The math teacher paid an inordinate amount of attention to the grammar rather than algebra." },
+{ word: "Insatiable", meaning: "hard or impossible to satisfy; greedy; avaricious", example: "Peter had an insatiable appetite for chocolate macadamia ice cream; he could never get enough." },
+{ word: "Insidious", meaning: "treacherous; sneaky", example: "Cancer, which can spread rapidly from a small cluster of cells, is an insidious disease." },
+{ word: "Insinuate", meaning: "to hint; to creep in", example: "When I told her that I hadn’t done any laundry in a month, Valerie insinuated that I was a slob." },
+{ word: "Insipid", meaning: "dull; bland; banal", example: "Barney’s jokes were so insipid that no one in the room managed to force out so much as a chuckle." },
+{ word: "Insolent", meaning: "arrogant; insulting", example: "The illmannered fouryearold was so insolent that even adults were tempted to raise their voices at him." },
+{ word: "Instigate", meaning: "to provoke; to stir up", example: "The strike was instigated by the ambitious union president, who wanted to get his name into the newspapers." },
+{ word: "Insular", meaning: "like an island; isolated", example: "Lying flat on his back in bed for twentyseven years, the 1,200pound man led an insular existence." },
+{ word: "Insurgent", meaning: "a rebel; someone who revolts against a government", example: "The heavily armed insurgents rushed into the presidential palace, but they paused to taste the fresh blueberry pie on the dinner table and were captured by the president’s bodyguards." },
+{ word: "Integral", meaning: "essential", example: "A solid offense was an integral part of our football team; so was a strong defense." },
+{ word: "Integrate", meaning: "to combine two or more things into a whole", example: "Marisol’s school offered an integrated history and language curriculum so that students learned Roman history and Latin in the same classroom." },
+{ word: "Intractable", meaning: "uncontrollable; stubborn; disobedient", example: "The intractable child was a torment to his nursery school teacher." },
+{ word: "Intransigent", meaning: "uncompromising; stubborn", example: "Vijay was an intransigent hardliner, and he didn’t care how many people he offended with his views." },
+{ word: "Intrinsic", meaning: "part of the essential nature of something; inherent", example: "Larry’s intrinsic boldness was always getting him into trouble." },
+{ word: "Introspective", meaning: "tending to think about oneself; examining one’s feelings", example: "Randy’s introspective examination of his motives led him to conclude that he must have been at fault in the breakup of his marriage." },
+{ word: "Inundate", meaning: "to flood; to cover completely with water; to overwhelm", example: "The tiny island kingdom was inundated by the tidal wave." },
+{ word: "Invective", meaning: "insulting or abusive speech", example: "The critic’s searing review was filled with bitterness and invective." },
+{ word: "Inveterate", meaning: "habitual; firm in habit; deeply rooted", example: "Eric was such an inveterate liar on the golf course that when he finally made a holeinone, he marked it on his score card as a zero." },
+{ word: "Irascible", meaning: "easily angered or provoked; irritable", example: "The CEO was so irascible, his employees were afraid to talk to him for fear he might hurl paperweights at them." },
+{ word: "Ironic", meaning: "meaning the opposite of what you seem to say; using words to mean something other than what they seem to mean", example: "Eddie was being ironic when he said he loved Peter like a brother; in truth, he hated him." },
+{ word: "Irrevocable", meaning: "irreversible", example: "My decision not to wear a Tarzan costume and ride on a float in the Macy’s Thanksgiving Day Parade is irrevocable." },
+{ word: "Itinerant", meaning: "moving from place to place", example: "The life of a traveling salesman is an itinerant one." },
+{ word: "Judicious", meaning: "exercising sound judgment", example: "The firefighters made judicious use of flameretardant foam as the burning airplane skidded along the runway." },
+{ word: "Juxtapose", meaning: "to place side by side", example: "Comedy and tragedy were juxtaposed in the play, which was alternately funny and sad." },
+{ word: "Kinetic", meaning: "having to do with motion; lively; active", example: "A speeding bullet has a lot of kinetic energy." },
+{ word: "Labyrinth", meaning: "a maze; something like a maze", example: "Each of the fifty floors in the office building was a labyrinth of dark corridors and narrow passageways." },
+{ word: "Laconic", meaning: "using few words, especially to the point of seeming rude", example: "The manager's laconic dismissal letter left the fired employees feeling angry and hurt." },
+{ word: "Lament", meaning: "to mourn", example: "From the balcony of the bulletpocked hotel, the foreign correspondents could hear hundreds of women and children lamenting the fallen soldiers." },
+{ word: "Lampoon", meaning: "to satirize; to mock; to parody", example: "The irreverent students mercilessly lampooned their Latin teacher's lisp in a skit at the school talent show." },
+{ word: "Languish", meaning: "to become weak, listless, or depressed", example: "The formerly eager and vigorous accountant languished in his tedious job at the international conglomerate." },
+{ word: "Largess", meaning: "generous giving of gifts (or the gifts themselves); generosity; philanthropy", example: "Sam was marginally literate at best. Only the largess of his uncle got Sam into Princeton." },
+{ word: "Latent", meaning: "present but not visible or apparent; potential", example: "At four, Maria was a latent shopaholic; she learned to read by browsing the descriptions in clothing catalogs." },
+{ word: "Laud", meaning: "to praise; to applaud; to extol; to celebrate", example: "The bank manager lauded the hero who trapped the escaping robber." },
+{ word: "Legacy", meaning: "something handed down from the past; a bequest", example: "The legacy of the corrupt administration was chaos, bankruptcy, and despair." },
+{ word: "Lethargy", meaning: "sluggishness; laziness; drowsiness; indifference", example: "The couch potato had fallen into a state of such total lethargy that he never moved except to change channels or get another bag of chips from the kitchen." },
+{ word: "Levity", meaning: "lightness; frivolity; unseriousness", example: "The speaker's levity was not appreciated by the convention of funeral directors, who felt that a convention of funeral directors was no place to tell jokes." },
+{ word: "Libel", meaning: "a written or published falsehood that injures the reputation of, or defames, someone", example: "The executive said that the newspaper had committed libel when it called him a stinking, nogood, corrupt, incompetent, overpaid, lying, worthless moron." },
+{ word: "Litigate", meaning: "to try in court; to engage in legal proceedings", example: "His lawyer thought a lawsuit would be fruitless, but the client wanted to litigate." },
+{ word: "Loquacious", meaning: "talking a lot or too much", example: "The child was surprisingly loquacious for one so small." },
+{ word: "Lucid", meaning: "clear; easy to understand", example: "The professor's explanation of the theory of relativity was so astonishingly lucid that even I could understand it." },
+{ word: "Lugubrious", meaning: "exaggeratedly mournful", example: "Harry's lugubrious eulogy at the funeral of his dog eventually made everyone start giggling." },
+{ word: "Luminous", meaning: "giving off light; glowing; bright", example: "The moon was a luminous disk in the cloudy nighttime sky." },
+{ word: "Machination", meaning: "scheming activity for an evil purpose", example: "The ruthless machinations of the mobsters left a trail of blood and bodies." },
+{ word: "Magnanimous", meaning: "forgiving; unresentful; noble in spirit; generous", example: "The boxer was magnanimous in defeat, telling the sports reporters that his opponent had simply been too talented for him to beat." },
+{ word: "Magnate", meaning: "a rich, powerful, or very successful business person", example: "John D. Rockefeller was a magnate who was never too cheap to give a shoeshine boy a dime for his troubles." },
+{ word: "Malaise", meaning: "a feeling of depression, uneasiness, or queasiness", example: "Malaise descended on the calculus class when the teacher announced a quiz." },
+{ word: "Malfeasance", meaning: "an illegal act, especially by a public official", example: "President Ford officially pardoned former president Nixon before the latter could be convicted of any malfeasance." },
+{ word: "Malignant", meaning: "causing harm", example: "Lina has had recurring tumors since the operation; we’re just glad that none of them have proved malignant." },
+{ word: "Malinger", meaning: "to pretend to be sick to avoid doing work", example: "Indolent Leon always malingered when it was his turn to clean up the house." },
+{ word: "Malleable", meaning: "easy to shape or bend", example: "Modeling clay is very malleable. So is Stuart. We can make him do whatever we want him to do." },
+{ word: "Mandate", meaning: "a command or authorization to do something; the will of the voters as expressed by the results of an election", example: "Our mandate from the executive committee was to find the answer to the problem as quickly as possible." },
+{ word: "Manifest", meaning: "visible; evident", example: "Daryl’s anger at us was manifest: You could see it in his expression and hear it in his voice." },
+{ word: "Manifesto", meaning: "a public declaration of beliefs or principles, usually political ones", example: "Jim’s article about the election was less a piece of reporting than a manifesto of his political views." },
+{ word: "Marshal", meaning: "to arrange in order; to gather together for the purpose of doing something", example: "The statistician marshaled his facts before making his presentation." },
+{ word: "Martial", meaning: "warlike; having to do with combat", example: "The parade of soldiers was martial in tone; the soldiers carried rifles and were followed by a formation of tanks." },
+{ word: "Martyr", meaning: "someone who gives up his or her life in pursuit of a cause, especially a religious one; one who suffers for a cause; one who makes a show of suffering in order to arouse sympathy", example: "Jacob is a martyr to his job; he would stay at his desk twentyfour hours a day if his wife and the janitor would let him." },
+{ word: "Matriculate", meaning: "to enroll, especially at a college", example: "Benny told everyone he was going to Harvard, but he actually matriculated to the local junior college." },
+{ word: "Maudlin", meaning: "silly and overly sentimental", example: "The high school reunion grew more and more maudlin as the participants shared more and more memories." },
+{ word: "Maverick", meaning: "a nonconformist; a rebel", example: "The political scientist was an intellectual maverick; most of his theories had no followers except himself." },
+{ word: "Maxim", meaning: "a fundamental principle; an old saying", example: "We always tried to live our lives according to the maxim that it is better to give than to receive." },
+{ word: "Mediate", meaning: "to help settle differences", example: "The United Nations representative tried to mediate between the warring countries, but the soldiers just kept shooting at one another." },
+{ word: "Mellifluous", meaning: "sweetly flowing", example: "Melanie’s clarinet playing was mellifluous; the notes flowed smoothly and beautifully." },
+{ word: "Mendacious", meaning: "lying; dishonest", example: "The jury saw through the mendacious witness and convicted the defendant." },
+{ word: "Mendicant", meaning: "a beggar", example: "The presence of thousands of mendicants in every urban area is a sad commentary on our national priorities." },
+{ word: "Mentor", meaning: "a teacher, tutor, counselor, or coach; especially in business, an experienced person who shows an inexperienced person the ropes", example: "Chris’s mentor in the pole vault was a former track star who used to hang out by the gym and give the students pointers." },
+{ word: "Mercenary", meaning: "a hired soldier; someone who will do anything for money", example: "Larry’s motives in writing the screenplay for the trashy movie were strictly mercenary—he needed the money." },
+{ word: "Mercurial", meaning: "emotionally unpredictable; rapidly changing in mood", example: "Mercurial Helen was crying one minute, laughing the next." },
+{ word: "Metamorphosis", meaning: "a magical change in form; a striking or sudden change", example: "When the magician passed his wand over Eileen’s head, she underwent a bizarre metamorphosis: She turned into a hamster." },
+{ word: "Microcosm", meaning: "the world in miniature", example: "Our community, which holds so many different communities, institutions, businesses, and types of people, is a microcosm of the larger world." },
+{ word: "Milieu", meaning: "environment; surroundings", example: "A caring and involved community is the proper milieu for raising a family." },
+{ word: "Minuscule", meaning: "very tiny", example: "Hank’s salary was minuscule, but the benefits were pretty good: He got to sit next to the refrigerator and eat all day long." },
+{ word: "Misanthropic", meaning: "hating mankind", example: "A misanthropic person doesn’t make distinctions; he or she hates everyone." },
+{ word: "Mitigate", meaning: "to moderate the effect of something", example: "The sense of imminent disaster was mitigated by the guide’s calm behavior and easy smile." },
+{ word: "Mollify", meaning: "to soften; to soothe; to pacify", example: "Lucy mollified the angry police officer by kissing his hand." },
+{ word: "Monolithic", meaning: "massive, solid, uniform, and unyielding", example: "A huge corporation is often said to be monolithic, especially if it is enormous and powerful and all its parts are dedicated to the same purpose." },
+{ word: "Moribund", meaning: "dying", example: "The steel industry in this country was moribund a few years ago, but now it seems to be reviving somewhat." },
+{ word: "Morose", meaning: "gloomy; sullen", example: "Louise was always so morose about everything that she was never any fun to be with." },
+{ word: "Mortify", meaning: "to humiliate", example: "I was mortified when my father asked my girlfriend whether she thought I was a dumb, pathetic wimp." },
+{ word: "Mundane", meaning: "ordinary; pretty boring; not heavenly and eternal", example: "My day was filled with mundane chores: I mowed the lawn, did the laundry, and fed the dog." },
+{ word: "Munificent", meaning: "very generous; lavish", example: "The munificent millionaire gave lots of money to any charity that came to him with a request." },
+{ word: "Myopia", meaning: "nearsightedness; lack of foresight", example: "The president suffered from economic myopia; he was unable to see the consequences of his fiscal policies." },
+{ word: "Myriad", meaning: "a huge number", example: "A country sky on a clear night is filled with a myriad of stars." },
+{ word: "Narcissism", meaning: "excessive love of one’s body or oneself", example: "Throwing a kiss to your reflection in the mirror is an act of narcissism." },
+{ word: "Nebulous", meaning: "vague; hazy; indistinct", example: "Oscar’s views are so nebulous that no one can figure out what he thinks about anything." },
+{ word: "Nefarious", meaning: "evil; flagrantly wicked", example: "The radicals’ nefarious plot was to destroy New York by filling the reservoirs with strawberry JellO." },
+{ word: "Neologism", meaning: "a new word or phrase; a new usage of a word", example: "Pedants don’t like neologisms." },
+{ word: "Nepotism", meaning: "showing favoritism to friends or family in business or politics", example: "Clarence had no business acumen, so he was counting on nepotism when he married the boss’s daughter." },
+{ word: "Nihilism", meaning: "the belief that there are no values or morals in the universe", example: "A nihilist does not believe in any objective standards of right or wrong." },
+{ word: "Nominal", meaning: "in name only; insignificant; AOK (during rocket launches)", example: "Bert was the nominal chair of the committee, but Sue was the one who ran things." },
+{ word: "Nostalgia", meaning: "sentimental longing for the past; homesickness", example: "A wave of nostalgia overcame me when the old Biggie Smalls song came on the radio; hearing it took me right back to 1997." },
+{ word: "Notorious", meaning: "famous for something bad", example: "No one wanted to play poker with Jeremy because he was a notorious cheater." },
+{ word: "Novel", meaning: "new; original", example: "Ray had a novel approach to homework: He didn’t do it." },
+{ word: "Noxious", meaning: "harmful; offensive", example: "Smoking is a noxious habit in every sense." },
+{ word: "Nuance", meaning: "a subtle difference or distinction", example: "The artist’s best work explored the nuance between darkness and deep shadow." },
+{ word: "Obdurate", meaning: "stubborn and insensitive", example: "The committee’s obdurate refusal to listen to our plan was heartbreaking to us since we had spent ten years coming up with it." },
+{ word: "Obfuscate", meaning: "to darken; to confuse; to make confusing", example: "The spokesman’s attempt to explain what the president had meant merely obfuscated the issue further." },
+{ word: "Oblique", meaning: "indirect; at an angle", example: "Essence sprinkled her student council speech with oblique references to the principal’s new toupee; the principal is so dense that he never figured out what was going on, but the rest of us were rolling on the floor." },
+{ word: "Oblivion", meaning: "total forgetfulness; the state of being forgotten", example: "A few of the young actors would find fame, but most were headed for oblivion." },
+{ word: "Obscure", meaning: "unknown; hard to understand; dark", example: "The comedy nightclub was filled with obscure comedians who stole one another’s jokes and seldom got any laughs." },
+{ word: "Obsequious", meaning: "fawning; subservient; sucking up to", example: "Ann’s assistant was so obsequious that she could never tell what he really thought about anything." },
+{ word: "Obtuse", meaning: "insensitive; blockheaded", example: "Karen was so obtuse that she didn’t realize for several days that Caleb had asked her to marry him." },
+{ word: "Officious", meaning: "annoyingly eager to help or advise", example: "The officious officer could never resist sticking his nose into other people’s business." },
+{ word: "Onerous", meaning: "burdensome; oppressive", example: "We were given the onerous task of cleaning up the fairgrounds after the carnival." },
+{ word: "Opaque", meaning: "impossible to see through; impossible to understand", example: "The windows in the movie star’s house were made not of glass but of some opaque material intended to keep his fans from spying on him." },
+{ word: "Opulent", meaning: "luxurious", example: "Everything in the opulent palace was made of gold—except the toiletpaper holder, which was made of platinum." },
+{ word: "Orthodox", meaning: "conventional; adhering to established principles or doctrines, especially in religion; by the book", example: "The doctor’s treatment for Lou’s cold was entirely orthodox: plenty of liquids, aspirin, and rest." },
+{ word: "Ostensible", meaning: "apparent (but misleading); professed", example: "Blake’s ostensible mission was to repair a broken telephone, but his real goal was to eavesdrop on the boss’s conversation." },
+{ word: "Ostentatious", meaning: "excessively conspicuous; showing off", example: "The designer’s use of expensive materials was ostentatious; every piece of furniture was covered with silk or velvet, and every piece of hardware was made of silver or gold." },
+{ word: "Pacify", meaning: "to calm someone down; to placate", example: "A parent gives a baby a pacifier to pacify him or her." },
+{ word: "Painstaking", meaning: "extremely careful; taking pains", example: "The jeweler was painstaking in his effort not to ruin the \$50 million diamond." },
+{ word: "Palliate", meaning: "to relieve or alleviate something without getting rid of the problem; to assuage; to mitigate", example: "You take aspirin in the hope that it will palliate your headache." },
+{ word: "Palpable", meaning: "capable of being touched; obvious; tangible", example: "The tumor was palpable; the doctor could feel it with his finger." },
+{ word: "Paltry", meaning: "insignificant; worthless", example: "The lawyer's efforts on our behalf were paltry; they didn't add up to anything." },
+{ word: "Panacea", meaning: "something that cures everything", example: "The administration seemed to believe that a tax cut would be a panacea for the country's economic ills." },
+{ word: "Paradigm", meaning: "a model or example", example: "Mr. Hufstader is the best teacher in the whole world; his classroom should be the paradigm for all classrooms." },
+{ word: "Paradox", meaning: "a true statement or phenomenon that nonetheless seems to contradict itself; an untrue statement or phenomenon that nonetheless seems logical", example: "Mr. Cooper is a political paradox; he's a staunch Republican who votes only for Democrats." },
+{ word: "Parochial", meaning: "narrow or confined in point of view; provincial", example: "The townspeople's concerns were entirely parochial; they worried only about what happened in their town and not about the larger world around it." },
+{ word: "Parody", meaning: "a satirical imitation", example: "At the talent show the girls sang a terrible parody of a Beatles song called 'I Want to Hold Your Foot.'" },
+{ word: "Parsimonious", meaning: "stingy", example: "The widow was so parsimonious that she hung used teabags out to dry on her clothesline so that she would be able to use them again." },
+{ word: "Partisan", meaning: "one who supports a particular person, cause, or idea", example: "Henry's plan to give himself the award had no partisan except himself." },
+{ word: "Patent", meaning: "obvious", example: "To say that the earth is flat is a patent absurdity since the world is obviously spherical." },
+{ word: "Paternal", meaning: "fatherly; fatherlike", example: "Rich is paternal toward his niece." },
+{ word: "Pathology", meaning: "the science of diseases", example: "Pathology is the science or study of diseases, but not necessarily in the medical sense." },
+{ word: "Patriarch", meaning: "the male head of a family or tribe", example: "The patriarch of the Murphy family, Jacob V. Murphy, made millions selling cobra fillets." },
+{ word: "Patrician", meaning: "a person of noble birth; an aristocrat", example: "Mr. Perno was a patrician, and he was never truly happy unless his place at the dinner table was set with at least half a dozen forks." },
+{ word: "Patronize", meaning: "to treat as an inferior; to condescend to", example: "Our guide at the art gallery was extremely patronizing, treating us as though we wouldn't be able to distinguish a painting from a piece of sidewalk without her help." },
+{ word: "Paucity", meaning: "scarcity", example: "There was a paucity of fresh vegetables at the supermarket, so we had to buy frozen ones." },
+{ word: "Peccadillo", meaning: "a minor offense", example: "The smiling defendant acted as though firstdegree murder were a mere peccadillo rather than a hideous crime." },
+{ word: "Pedantic", meaning: "boringly scholarly or academic", example: "The discussion quickly turned pedantic as each participant tried to sound more learned than all the others." },
+{ word: "Pedestrian", meaning: "unimaginative; banal", example: "Mary Anne said the young artist's work was brilliant, but I found it to be pedestrian." },
+{ word: "Pejorative", meaning: "negative; disparaging", example: "'Hi, stupid' is a pejorative greeting." },
+{ word: "Penchant", meaning: "a strong taste or liking for something; a predilection", example: "Dogs have a penchant for chasing cats and mailmen." },
+{ word: "Penitent", meaning: "sorry; repentant; contrite", example: "Julie was penitent when Kanye explained how much pain she had caused him." },
+{ word: "Pensive", meaning: "thoughtful and sad", example: "Norton became suddenly pensive when Jack mentioned his dead father." },
+{ word: "Peremptory", meaning: "final; categorical; dictatorial", example: "Asher's father peremptorily banished him to his room." },
+{ word: "Perennial", meaning: "continual; happening again and again or year after year", example: "Mr. Lorenzo is a perennial favorite of students at the high school because he always gives everyone an A." },
+{ word: "Perfidy", meaning: "treachery", example: "It was the criminals' natural perfidy that finally did them in, as each one became an informant on the other." },
+{ word: "Perfunctory", meaning: "unenthusiastic; careless", example: "John made a couple of perfunctory attempts at answering the questions on the test, but then he put down his pencil and his head and slept until the end of the period." },
+{ word: "Peripatetic", meaning: "wandering; traveling continually; itinerant", example: "Groupies are a peripatetic bunch, traveling from concert to concert to follow their favorite rock stars." },
+{ word: "Periphery", meaning: "the outside edge of something", example: "José never got involved in any of our activities; he was always at the periphery." },
+{ word: "Perjury", meaning: "lying under oath", example: "The defendant was acquitted of bribery but convicted of perjury because he had lied on the witness stand during his trial." },
+{ word: "Permeate", meaning: "to spread or seep through; to penetrate", example: "A horrible smell quickly permeated the room after Jock lit a cigarette." },
+{ word: "Pernicious", meaning: "deadly; extremely evil", example: "The drug dealers conducted their pernicious business on every street corner in the city." },
+{ word: "Perquisite", meaning: "a privilege that goes along with a job; a 'perk'", example: "Free access to a photocopier is a perquisite of most office jobs." },
+{ word: "Pertinent", meaning: "relevant; dealing with the matter at hand", example: "The suspect said that he was just borrowing the jewelry for a costume ball. The cop said he did not think that was pertinent." },
+{ word: "Perturb", meaning: "to disturb greatly", example: "Ivan's mother was perturbed by his aberrant behavior at the dinner table." },
+{ word: "Peruse", meaning: "to read carefully", example: "The lawyer perused the contract for many hours, looking for a loophole that would enable his client to back out of the deal." },
+{ word: "Pervade", meaning: "to spread throughout", example: "A terrible smell pervaded the apartment building after the sewer main exploded." },
+{ word: "Petulant", meaning: "rude; cranky; illtempered", example: "Gloria became petulant when we suggested that she leave her pet cheetah at home when she came to spend the weekend." },
+{ word: "Philanthropy", meaning: "love of mankind, especially by doing good deeds", example: "His gift of one billion dollars to the local orphanage was the finest act of philanthropy I've ever seen." },
+{ word: "Philistine", meaning: "a smugly ignorant person with no appreciation of intellectual or artistic matters", example: "The novelist dismissed his critics as philistines, saying they wouldn't recognize a good book if it crawled up and bit them on the nose." },
+{ word: "Pious", meaning: "reverent or devout; outwardly (and sometimes falsely) reverent or devout; hypocritical", example: "A pious Presbyterian is one who goes to church every Sunday and says his prayers every night before bed." },
+{ word: "Pivotal", meaning: "crucial", example: "Sofia's contribution was pivotal; without it, we would have failed." },
+{ word: "Placate", meaning: "to pacify; to appease; to soothe", example: "The tribe placated the angry volcano by tossing a few teenagers into the raging crater." },
+{ word: "Plaintive", meaning: "expressing sadness or sorrow", example: "The lead singer's plaintive love song expressed his sorrow at being abandoned by his girlfriend for the lead guitarist." },
+{ word: "Platitude", meaning: "a dull or trite remark; a cliché", example: "The principal thinks he is a great orator, but his loud, boring speech was full of platitudes." },
+{ word: "Plebeian", meaning: "common; vulgar; lowclass", example: "Sarah refused to eat frozen dinners, saying they were too plebeian for her discriminating palate." },
+{ word: "Plethora", meaning: "an excess", example: "We ate a plethora of candy on Halloween and a plethora of turkey on Thanksgiving." },
+{ word: "Poignant", meaning: "painfully emotional; extremely moving; sharp or astute", example: "All the reporters stopped taking notes as they watched the old woman's poignant reunion with her daughter." },
+{ word: "Polarize", meaning: "to break up into opposing factions or groupings", example: "The issue of what kind of sand to put in the sandbox polarized the nursery school class." },
+{ word: "Polemic", meaning: "a powerful argument often made to attack or refute a controversial issue", example: "The book was a convincing polemic that revealed the fraud at the heart of the large corporation." },
+{ word: "Ponderous", meaning: "so large as to be clumsy; massive; dull", example: "The wedding cake was a ponderous blob of icing and jelly beans." },
+{ word: "Portent", meaning: "an omen; a sign of something coming in the future", example: "The distant rumbling we heard this morning was a portent of the thunderstorm that hit our area this afternoon." },
+{ word: "Postulate", meaning: "something accepted as true without proof; an axiom", example: "A postulate is taken to be true because it is convenient to do so." },
+{ word: "Pragmatic", meaning: "practical; down to earth; based on experience rather than theory", example: "Erecting a gigantic dome of gold over our house would have been the ideal solution to the leak in our roof, but the small size of our bank account forced us to be pragmatic." },
+{ word: "Precedent", meaning: "an earlier example or model of something", example: "Last year's milliondollar prom set a precedent that the current student council hopes will not be followed in the future." },
+{ word: "Precept", meaning: "a rule to live by; a principle establishing a certain kind of action or behavior; a maxim", example: "'Love thy neighbor' is a precept we have sometimes found difficult to follow." },
+{ word: "Precipitate", meaning: "to cause to happen abruptly", example: "A panic among investors precipitated last Monday's crisis in the stock market." },
+{ word: "Precipitous", meaning: "steep", example: "A mountain can be precipitous, meaning either that it is steep or that it comprises lots of steep cliffs." },
+{ word: "Preclude", meaning: "to prevent something from ever happening", example: "Ann feared that her abysmal academic career might preclude her becoming a brain surgeon." },
+{ word: "Precursor", meaning: "forerunner; something that goes before and anticipates or paves the way for whatever it is that follows", example: "The arrival of a milliondollar check in the mail might be the precursor of a brandnew car." },
+{ word: "Predilection", meaning: "a natural preference for something", example: "The impatient judge had a predilection for wellprepared lawyers who said what they meant and didn't waste his time." },
+{ word: "Preeminent", meaning: "better than anyone else; outstanding; supreme", example: "The nation's preeminent harpsichordist would be the best harpsichordist in the nation." },
+{ word: "Preempt", meaning: "to seize something by prior right", example: "When television show A preempts television show B, television show A is shown at the time usually reserved for television show B." },
+{ word: "Premise", meaning: "an assumption; the basis for a conclusion", example: "In deciding to eat all the ice cream in the freezer, my premise was that if I didn't do it, you would." },
+{ word: "Prepossess", meaning: "to preoccupy; to influence beforehand or prejudice; to make a good impression on beforehand", example: "My dream of producing energy from old chewinggum wrappers prepossessed me, and I lost my job, my home, my wife, and my children." },
+{ word: "Prerogative", meaning: "a right or privilege connected exclusively with a position, a person, a class, a nation, or some other group or classification", example: "Giving traffic tickets to people he didn't like was one of the prerogatives of Junior's job as a policeman." },
+{ word: "Prevail", meaning: "to triumph; to overcome rivals; (with on, upon, or with) to persuade", example: "The prosecutor prevailed in the murder trial; the defendant was found guilty." },
+{ word: "Pristine", meaning: "original; unspoiled; pure", example: "An antique in pristine condition is one that hasn't been tampered with over the years." },
+{ word: "Prodigal", meaning: "wastefully extravagant", example: "The chef was prodigal with his employer's money, spending thousands of dollars on ingredients for what was supposed to be a simple meal." },
+{ word: "Prodigious", meaning: "extraordinary; enormous", example: "To fill the Grand Canyon with PingPong balls would be a prodigious undertaking." },
+{ word: "Prodigy", meaning: "an extremely talented child; an extraordinary accomplishment or occurrence", example: "The threeyearold prodigy could play all of Beethoven and most of Brahms on his harmonica." },
+{ word: "Profane", meaning: "not having to do with religion; irreverent; blasphemous", example: "Worshiping the almighty dollar is profane." },
+{ word: "Profess", meaning: "to declare; to declare falsely or pretend", example: "Jason professed to have taught himself calculus." },
+{ word: "Proficient", meaning: "thoroughly competent; skillful; good (at something)", example: "Lillian was a proficient cabinetmaker." },
+{ word: "Profligate", meaning: "extravagantly wasteful and, usually, wildly immoral", example: "The fraternity members were a profligate bunch; they held allnight orgies on weeknights." },
+{ word: "Profound", meaning: "deep (in several senses)", example: "Profound understanding is deep understanding." },
+{ word: "Profuse", meaning: "flowing; extravagant", example: "When we gave Marian our house, our car, and all our clothes, her gratitude was profuse." },
+{ word: "Proletariat", meaning: "the industrial working class", example: "The proletariat is the laboring class—bluecollar workers or people who roll up their shirtsleeves to do an honest day's work." },
+{ word: "Proliferate", meaning: "to spread or grow rapidly", example: "Honeybees proliferated when we filled our yard with flowering plants." },
+{ word: "Prolific", meaning: "abundantly productive; fruitful or fertile", example: "A prolific writer is a writer who writes a lot of books." },
+{ word: "Promulgate", meaning: "to proclaim; to publicly or formally declare something", example: "The principal promulgated a new dress code over the loudspeaker system." },
+{ word: "Propensity", meaning: "a natural inclination or tendency; a predilection", example: "Jessie has a propensity for saying stupid things: Every time she opens her mouth, something stupid comes out." },
+{ word: "Propitious", meaning: "marked by favorable signs or conditions", example: "Rush hour is not a propitious time to drive into the city." },
+{ word: "Proponent", meaning: "an advocate; a supporter of a position", example: "The proponents of a tax increase will probably not be reelected next fall." },
+{ word: "Proprietary", meaning: "characteristic of an owner of property; constituting property", example: "George felt proprietary about the chocolatecookie recipe; he had invented it himself." },
+{ word: "Propriety", meaning: "properness; good manners", example: "The old lady viewed the little girl's failure to curtsy as a flagrant breach of propriety." },
+{ word: "Prosaic", meaning: "dull; unimaginative; like prose (as opposed to poetry)", example: "His description of the battle was so prosaic that it was hard for his listeners to believe that any of the soldiers had even been wounded." },
+{ word: "Proscribe", meaning: "to outlaw; to prohibit", example: "Spitting on the sidewalk and shooting at road signs were both proscribed activities under the new administration." },
+{ word: "Proselytize", meaning: "to convert (someone) from one religion or doctrine to another; to recruit converts to a religion or doctrine", example: "The former Methodist had been proselytized by a Lutheran deacon." },
+{ word: "Protract", meaning: "to prolong", example: "The trial was so protracted that one of the jurors died of old age and another gave birth." },
+{ word: "Provident", meaning: "preparing for the future; providing for the future; frugal", example: "We were provident with our limited food supplies, knowing that the winter ahead would be long and cold." },
+{ word: "Provincial", meaning: "limited in outlook to one's own small corner of the world; narrow", example: "The farmers were provincial; they had no opinions about anything but the price of corn." },
+{ word: "Provisional", meaning: "conditional; temporary; tentative", example: "Louis had been accepted as a provisional member of the club." },
+{ word: "Proximity", meaning: "nearness", example: "I can't stand being in the proximity of a nuclear explosion." },
+{ word: "Prudent", meaning: "careful; having foresight", example: "Joe is a prudent money manager." },
+{ word: "Purported", meaning: "rumored; claimed", example: "The heiress is purported to have been kidnapped by adventurers." },
+{ word: "Putative", meaning: "commonly accepted; supposed; reputed", example: "The putative reason for placing the monument downtown is that nobody had wanted it uptown." },
+{ word: "Qualify", meaning: "to modify or restrict", example: "Susan qualified her praise of Judith by saying that her kind words applied only to Judith’s skillful cooking and not to her abhorrent personality." },
+{ word: "Qualitative", meaning: "having to do with the quality or qualities of something (as opposed to the quantity)", example: "If a school achieves a qualitative improvement in enrollment, it means the school is being attended by better students." },
+{ word: "Quantitative", meaning: "having to do with quantity", example: "If the school achieves a quantitative improvement, it means the school is being attended by more students." },
+{ word: "Querulous", meaning: "complaining; grumbling; whining", example: "The exasperated mother finally managed to hush her querulous child." },
+{ word: "Quixotic", meaning: "romantic or idealistic to a foolish or impractical degree", example: "For many years Mr. Morris had led a quixotic effort to repeal the federal income tax." },
+{ word: "Ramification", meaning: "a consequence; a branching out", example: "The professor found a solution to the problem, but there are many ramifications; some experts are afraid that he has created more problems than he has solved." },
+{ word: "Rancor", meaning: "bitter, longlasting ill will or resentment", example: "The mutual rancor felt by the two nations eventually led to war." },
+{ word: "Rapacious", meaning: "greedy; plundering; avaricious", example: "Wall Street investment bankers are often accused of being rapacious, but they claim they are performing a valuable economic function." },
+{ word: "Rebuke", meaning: "to criticize sharply", example: "We trembled as Mr. Solomon rebuked us for flipping over his car and taking off the tires." },
+{ word: "Rebut", meaning: "to contradict; to argue in opposition to; to prove to be false", example: "They all thought I was crazy, but none of them could rebut my argument." },
+{ word: "Recalcitrant", meaning: "stubbornly defiant of authority or control; disobedient", example: "The recalcitrant cancer continued to spread through the patient's body despite every therapy and treatment the doctors tried." },
+{ word: "Recant", meaning: "to publicly take back and deny (something previously said or believed); to openly confess error", example: "The chagrined scientist recanted his theory that mice originated on the moon; it turned out that he had simply mixed up the results of two separate experiments." },
+{ word: "Reciprocal", meaning: "mutual; shared; interchangeable", example: "The Rochester Club had a reciprocal arrangement with the Duluth Club." },
+{ word: "Reclusive", meaning: "hermitlike; withdrawn from society", example: "The crazy millionaire led a reclusive existence, shutting himself up in his labyrinthine mansion and never setting foot in the outside world." },
+{ word: "Recondite", meaning: "hard to understand; over one's head", example: "The philosopher's thesis was so recondite that I couldn't get past the first two sentences." },
+{ word: "Recrimination", meaning: "a bitter counteraccusation, or the act of making a bitter counteraccusation", example: "Melissa was full of recrimination." },
+{ word: "Redolent", meaning: "fragrant", example: "The air in autumn is redolent of wood smoke and fallen leaves." },
+{ word: "Redundant", meaning: "unnecessarily repetitive; excessive; excessively wordy", example: "Eric had already bought paper plates, so our purchase of paper plates was redundant." },
+{ word: "Refute", meaning: "to prove to be false; to disprove", example: "His expensive suit and imported shoes clearly refuted his claim that he was poor." },
+{ word: "Reiterate", meaning: "to say again; to repeat", example: "The candidate had reiterated his position so many times on the campaign trail that he sometimes even muttered it in his sleep." },
+{ word: "Relegate", meaning: "to banish; to send away", example: "The most junior of the junior executives was relegated to a tiny, windowless office that had once been a broom closet." },
+{ word: "Relentless", meaning: "continuous; unstoppable", example: "The insatiable rabbit was relentless; it ate and ate until nothing was left in the botanical garden." },
+{ word: "Relinquish", meaning: "to release or let go of; to surrender; to stop doing", example: "The hungry dog refused to relinquish the enormous beef bone that he had stolen from the butcher's shop." },
+{ word: "Remonstrate", meaning: "to argue against; to protest; to raise objections", example: "My boss remonstrated with me for telling all the secretaries they could take off the rest of the week." },
+{ word: "Renaissance", meaning: "a rebirth or revival", example: "The declining neighborhood underwent a renaissance when a group of investors bought several crumbling tenements and turned them into attractive apartment buildings." },
+{ word: "Renounce", meaning: "to give up formally or resign; to disown; to have nothing to do with anymore", example: "Despite the pleadings and protestations of her parents, Deborah refused to renounce her love for the leader of the motorcycle gang." },
+{ word: "Reparation", meaning: "paying back; making amends; compensation", example: "The defeated country demanded reparations for the destruction it had suffered at the hands of the victorious army." },
+{ word: "Repercussion", meaning: "a consequence; an indirect effect", example: "One repercussion of the new tax law was that accountants found themselves with a lot of new business." },
+{ word: "Replenish", meaning: "to fill again; to resupply; to restore", example: "The manager of the hardware store needed to replenish his stock; quite a few of the shelves were empty." },
+{ word: "Replete", meaning: "completely filled; abounding", example: "The oncepolluted stream was now replete with fish of every description." },
+{ word: "Reprehensible", meaning: "worthy of severe blame or censure", example: "He put the cat in the laundry chute, tied the dog to the chimney, and committed several other reprehensible acts." },
+{ word: "Reprisal", meaning: "a military action undertaken in revenge for another; an act of taking “an eye for an eye”", example: "The raid on the Iranian oildrilling platform was a reprisal for the Iranians' earlier attack on the American tanker." },
+{ word: "Reproach", meaning: "to scold, usually in disappointment; to blame; to disgrace", example: "The police officer reproached me for leaving my car parked overnight in a nostanding zone." },
+{ word: "Reprove", meaning: "to criticize mildly", example: "Aunt May reproved us for eating too much, but we could tell she was actually thrilled that we had enjoyed the meal." },
+{ word: "Repudiate", meaning: "to reject; to renounce; to disown; to have nothing to do with", example: "Hoping to receive a lighter sentence, the convicted gangster repudiated his former connection with the mob." },
+{ word: "Requisite", meaning: "required; necessary", example: "Howard bought a hunting rifle and the requisite ammunition." },
+{ word: "Resolute", meaning: "determined; firm; unwavering", example: "Uncle Ted was resolute in his decision not to have a good time at our Christmas party; he stood alone in the corner and muttered to himself all night long." },
+{ word: "Respite", meaning: "a period of rest or relief", example: "We worked without respite from five in the morning until five in the afternoon." },
+{ word: "Reticent", meaning: "quiet; restrained; reluctant to speak, especially about oneself", example: "Luther's natural reticence made him an ideal speaker: His speeches never lasted more than a few minutes." },
+{ word: "Revere", meaning: "to respect highly; to honor", example: "Einstein was a preeminent scientist who was revered by everyone, even his rivals." },
+{ word: "Rhetoric", meaning: "the art of formal speaking or writing; inflated discourse", example: "A talented public speaker might be said to be skilled in rhetoric." },
+{ word: "Rigorous", meaning: "strict; harsh; severe", example: "Our exercise program was rigorous but effective; after just a few months, our eighteen hours of daily exercise had begun to pay off." },
+{ word: "Robust", meaning: "strong and healthy; vigorous", example: "The hundredyearold woman was still robust." },
+{ word: "Rogue", meaning: "a criminally dishonest person; a scoundrel", example: "Huckleberry Finn is a bit of a rogue; while his actions are technically criminal, he performs them with noble intentions and a humorous spirit." },
+{ word: "Rudimentary", meaning: "basic; crude; unformed or undeveloped", example: "The boy who had lived with wolves for fifteen years lacked even the most rudimentary social skills." },
+{ word: "Ruminate", meaning: "to contemplate; to ponder; to mull over", example: "The teacher's comment about the causes of weather set me to ruminating about what a nice day it was and to wishing that I were outside." },
+{ word: "Rustic", meaning: "rural; lacking urban comforts or sophistication; primitive", example: "Life in the log cabin was too rustic for Leah; she missed hot showers, cold beer, and electricity." },
+{ word: "Saccharine", meaning: "sweet; excessively or disgustingly sweet", example: "The love story was so saccharine that I vowed never to see another sappy, predictable movie again." },
+{ word: "Sacrilege", meaning: "a violation of something sacred; blasphemy", example: "The minister committed the sacrilege of delivering his sermon while wearing his golf shoes; he didn’t want to be late for his teeoff time, which was just a few minutes after the scheduled end of the service." },
+{ word: "Sacrosanct", meaning: "sacred; held to be inviolable", example: "Mr. Peters’s lunchtime trip to his neighborhood bar was sacrosanct; he would no sooner skip it than he would skip his mother ’s funeral." },
+{ word: "Sagacious", meaning: "discerning; shrewd; keen in judgment; wise", example: "Edgar ’s decision to move the chickens into the barn turned out to be sagacious; about an hour later, the hailstorm hit." },
+{ word: "Salient", meaning: "sticking out; conspicuous; leaping", example: "Ursula had a number of salient features including, primarily, her nose, which stuck out so far that she was constantly in danger of slamming it in doors and windows." },
+{ word: "Salutary", meaning: "healthful; remedial; curative", example: "Lowered blood pressure is among the salutary effects of exercise." },
+{ word: "Sanctimonious", meaning: "pretending to be devout; affecting religious feeling", example: "The sanctimonious old bore pretended to be deeply offended when Lucius whispered a mild swearword after dropping the anvil on his bare foot." },
+{ word: "Sanguine", meaning: "cheerful; optimistic; hopeful", example: "Miguel was sanguine about his chances of winning the Nobel Peace Prize, even though, as an eighth grader, he hadn’t really done anything to deserve it." },
+{ word: "Sardonic", meaning: "mocking; scornful", example: "Isabella’s weak attempts at humor were met by nothing but a few scattered pockets of sardonic laughter." },
+{ word: "Scintillate", meaning: "to sparkle, either literally or figuratively", example: "Stefan was a quiet drudge at home, but at a party he could be absolutely scintillating, tossing off witty remarks and charming everyone in the room." },
+{ word: "Scrupulous", meaning: "strict; careful; hesitant for ethical reasons", example: "Leela was scrupulous in keeping her accounts; she knew where every penny came from and where every penny went." },
+{ word: "Scrutinize", meaning: "to examine very carefully", example: "I scrutinized the card catalog at the library but couldn’t find a single book on the topic I had chosen for my term paper." },
+{ word: "Secular", meaning: "having nothing to do with religion or spiritual concerns", example: "The group home had several nuns on its staff, but it was an entirely secular operation; it was run by the city, not the church." },
+{ word: "Sedition", meaning: "treason; the incitement of public disorder or rebellion", example: "The political group was charged with sedition because it had advocated burning the capital to the ground." },
+{ word: "Segregate", meaning: "to separate", example: "Rico kept his prizewinning poodle, Fluffy, segregated from males until her thirtieth birthday." },
+{ word: "Sensory", meaning: "having to do with the senses or sensation", example: "Babies enjoy bright colors, moving objects, pleasant sounds, and other forms of sensory stimulation." },
+{ word: "Sentient", meaning: "able to perceive by the senses; conscious", example: "While trees are not, strictly speaking, sentient beings, many credible people claim to have communicated with them." },
+{ word: "Sequester", meaning: "to set or keep apart", example: "Since much of the rest of the city had become a battle zone, the visiting entertainers were sequestered in the international hotel." },
+{ word: "Serendipity", meaning: "accidental good fortune; discovering good things without looking for them", example: "It was serendipity rather than genius that led the archaeologist to his breathtaking discovery of the ancient civilization." },
+{ word: "Servile", meaning: "submissive and subservient; like a servant", example: "Cat lovers sometimes say that dogs are too servile; they follow their owners everywhere and slobber all over them at every opportunity." },
+{ word: "Singular", meaning: "unique; superior; exceptional; strange", example: "Darren had the singular ability to stand on one big toe for several hours at a time." },
+{ word: "Sinister", meaning: "evil, wicked; foreshadowing evil, trouble, or wickedness", example: "The house on the hill is pretty by day, but at night it casts sinister shadows and emits frightening moans." },
+{ word: "Slander", meaning: "to speak badly about someone publicly; to defame; to spread malicious rumor", example: "Jonathan slandered Mr. Perriwinkle by telling everyone in school that the principal was a thief; Mr. Perriwinkle resented this slander." },
+{ word: "Sloth", meaning: "laziness; sluggishness", example: "Yusuke’s weekends were devoted to sloth. He never arose before noon, and he seldom left the house before Monday morning." },
+{ word: "Sobriety", meaning: "the state of being sober; seriousness", example: "Sobriety was such an unfamiliar condition that the reforming alcoholic didn’t recognize it at first." },
+{ word: "Solicitous", meaning: "eager and attentive, often to the point of hovering; anxiously caring or attentive", example: "Every time we turned around, we seemed to step on the foot of the solicitous salesman, who appeared to feel that if he left us alone for more than a few seconds, we would decide to leave the store." },
+{ word: "Solvent", meaning: "not broke or bankrupt; able to pay one’s bills", example: "Jerry didn’t hope to become a millionaire; all he wanted to do was remain solvent." },
+{ word: "Soporific", meaning: "sleep inducing; boring; sleepy", example: "The doctor calmed his hysterical patient by injecting him with some sort of soporific medication." },
+{ word: "Sordid", meaning: "vile; filthy; squalid", example: "The college roommates led a sordid existence, surrounded by dirty laundry, rotting garbage, and body odor." },
+{ word: "Spawn", meaning: "to bring forth; to produce a large number", example: "A bestselling book or blockbuster movie will spawn dozens of imitators." },
+{ word: "Specious", meaning: "deceptively plausible or attractive", example: "The charlatan’s specious theories about curing baldness with used tea bags charmed the studio audience but did not convince the experts, who believed that fresh tea bags were more effective." },
+{ word: "Sporadic", meaning: "stopping and starting; scattered; occurring in bursts every once in a while", example: "Kyle’s attention to his schoolwork was sporadic at best; he tended to lose his concentration after a few minutes of effort." },
+{ word: "Spurious", meaning: "false; fake", example: "The political candidate attributed his loss to numerous spurious rumors that had hounded him throughout his campaign." },
+{ word: "Squalor", meaning: "filth; wretched, degraded, or repulsive living conditions", example: "If people live in squalor for too long, the ruling elite can count on an insurgency." },
+{ word: "Squander", meaning: "to waste", example: "Jerry failed to husband his inheritance; instead, he squandered it on stuffed toys." },
+{ word: "Stagnation", meaning: "motionlessness; inactivity", example: "The company grew quickly for several years, then fell into stagnation." },
+{ word: "Static", meaning: "stationary; not changing or moving", example: "Sales of the new book soared for a few weeks then became static." },
+{ word: "Staunch", meaning: "firmly committed; firmly in favor of; steadfast", example: "A staunch Republican is someone who always votes for Republican candidates." },
+{ word: "Steadfast", meaning: "loyal; faithful", example: "Steadfast love is love that never wavers." },
+{ word: "Stigmatize", meaning: "to brand with disgrace; to set a mark of disgrace upon", example: "Steve’s jeans were Lee’s instead of Levi’s, and this mistake stigmatized him for the rest of his high school career." },
+{ word: "Stipulate", meaning: "to require something as part of an agreement", example: "You are well advised to stipulate the maximum amount you will pay in any carrepair contract." },
+{ word: "Stoic", meaning: "indifferent (at least outwardly) to pleasure or pain, to joy or grief, to fortune or misfortune", example: "Nina was stoic about the death of her canary; she went about her business as though nothing sad had happened." },
+{ word: "Stratum", meaning: "a layer; a level", example: "The middle class is one stratum of society." },
+{ word: "Stricture", meaning: "a restriction; a limitation; a negative criticism", example: "Despite the strictures of apartment living, we enjoyed the eight years we spent in New York City." },
+{ word: "Strife", meaning: "bitter conflict; discord; a struggle or clash", example: "Marital strife often leads to divorce." },
+{ word: "Stringent", meaning: "strict; restrictive", example: "The restaurant’s stringent dress code required diners to wear paper hats, army boots, and batteryoperated twirling bow ties." },
+{ word: "Stymie", meaning: "to thwart; to get in the way of; to hinder", example: "In my effort to make a name for myself in the company, I was stymied by my boss, who always managed to take credit for all the good things I did and to blame me for his mistakes." },
+{ word: "Subjugate", meaning: "to subdue and dominate; to enslave", example: "I bought the fancy riding lawn mower because I thought it would make my life easier, but it quickly subjugated me; all summer long, it seems, I did nothing but change its oil, sharpen its blades, and drive it back and forth between my house and the repair shop." },
+{ word: "Sublime", meaning: "awesome; extremely exalted; lofty; majestic", example: "After winning \$70 million in the lottery and quitting our jobs as sewer workers, our happiness was sublime." },
+{ word: "Subordinate", meaning: "lower in importance, position, or rank; secondary", example: "My desire to sit on the couch and watch television all night long was subordinate to my desire to stand in the kitchen eating junk food all night long, so I did the latter instead of the former." },
+{ word: "Substantive", meaning: "having substance; real; essential; solid; substantial", example: "The differences between the two theories were not substantive; in fact, the two theories said the same thing with different words." },
+{ word: "Subtle", meaning: "not obvious; able to make fine distinctions; ingenious; crafty", example: "The alien beings had created a shrewd replica of Mr. Jenson, but his wife did notice a few subtle differences, including the fact that the new Mr. Jenson had no pulse." },
+{ word: "Subversive", meaning: "corrupting; overthrowing; undermining; insurgent", example: "The political group destroyed the Pentagon’s computer files, hijacked Air Force One, and engaged in various other subversive activities." },
+{ word: "Succinct", meaning: "brief and to the point; concise", example: "Aaron’s succinct explanation of why the moon doesn’t fall out of the sky and crash into the earth quickly satisfied even the dullest of the anxious investment bankers." },
+{ word: "Succumb", meaning: "to yield or submit; to die", example: "I had said I wasn’t going to eat anything at the party, but when Ann held the tray of imported chocolates under my nose, I quickly succumbed and ate all of them." },
+{ word: "Supercilious", meaning: "haughty; patronizing", example: "The supercilious RollsRoyce salesman treated us like peasants until we opened our suitcase full of onehundreddollar bills." },
+{ word: "Superficial", meaning: "on the surface only; shallow; not thorough", example: "Tom had indeed been shot, but the wound was superficial; the bullet had merely creased the tip of his nose." },
+{ word: "Superfluous", meaning: "extra; unnecessary; redundant", example: "Andrew’s attempt to repair the light bulb was superfluous, since the light bulb had already been repaired." },
+{ word: "Surfeit", meaning: "excess; an excessive amount; excess or overindulgence in eating or drinking", example: "Thanksgiving meals are usually a surfeit for everyone involved." },
+{ word: "Surreptitious", meaning: "sneaky; secret", example: "The dinner guest surreptitiously slipped a few silver spoons into his jacket as he was leaving the dining room." },
+{ word: "Surrogate", meaning: "substitute", example: "A kind parent offered to go to prison as a surrogate for his son, who had been convicted of extortion." },
+{ word: "Sycophant", meaning: "one who sucks up to others", example: "The French class seemed to be full of sycophants; the students were always bringing apples to the teacher and telling her how nice she looked." },
+{ word: "Synthesis", meaning: "the combining of parts to form a whole", example: "It seemed as though the meeting might end in acrimony and confusion until Raymond offered his brilliant synthesis of the two diverging points of view." },
+{ word: "Tacit", meaning: "implied; not spoken", example: "Mrs. Rodgers never formally asked us to murder her husband, but we truly believed that we were acting with her tacit consent." },
+{ word: "Taciturn", meaning: "untalkative by nature", example: "The chairman was so taciturn that we often discovered that we had absolutely no idea what he was thinking." },
+{ word: "Tangential", meaning: "only superficially related to the matter at hand; not especially relevant; peripheral", example: "The vice president’s speech bore only a tangential relationship to the topic that had been announced." },
+{ word: "Tangible", meaning: "touchable; palpable", example: "A mountain of cigarette butts was the only tangible evidence that Luke had been in our house." },
+{ word: "Tantamount", meaning: "equivalent to", example: "Waving a banner for the visiting team at that football game would be tantamount to committing suicide; the hometeam fans would tear you apart in a minute." },
+{ word: "Tautological", meaning: "redundant; circular", example: "“When everyone has a camera, cameras will be universal” is a tautological statement, because “everyone having a camera” and “cameras being universal” mean the same thing." },
+{ word: "Temerity", meaning: "boldness; recklessness; audacity", example: "Our waiter at the restaurant had the temerity to tell me he thought my table manners were atrocious." },
+{ word: "Temperate", meaning: "mild; moderate; restrained", example: "Our climate is temperate during the spring and fall but nearly unbearable during the summer and winter." },
+{ word: "Tenable", meaning: "defensible, as in one’s position in an argument; capable of being argued successfully; valid", example: "Members of the Flat Earth Society continue to argue that the earth is flat, although even children dismiss their arguments as untenable." },
+{ word: "Tenacious", meaning: "persistent; stubborn; not letting go", example: "The foreign student’s tenacious effort to learn English won him the admiration of all the teachers at our school." },
+{ word: "Tenet", meaning: "a shared principle or belief", example: "The tenets of his religion prohibited him from dancing and going to movies." },
+{ word: "Tentative", meaning: "experimental; temporary; uncertain", example: "George made a tentative effort to paint his house by himself; he slapped some paint on the front door and his clothes, tipped over the bucket, and called a professional." },
+{ word: "Tenuous", meaning: "flimsy; extremely thin", example: "The organization’s financial situation has always been tenuous; the balance of the checking account is usually close to zero." },
+{ word: "Terse", meaning: "using no unnecessary words; succinct", example: "The new recording secretary’s minutes were so terse that they were occasionally cryptic." },
+{ word: "Theology", meaning: "the study of God or religion", example: "Ralph was a paradox: He was an atheist, yet he passionately studied theology." },
+{ word: "Tirade", meaning: "a prolonged, bitter speech", example: "Preston launched into a tirade against imitation cheese on the school lunch menu." },
+{ word: "Torpor", meaning: "sluggishness; inactivity; apathy", example: "After consuming the guinea pig, the boa constrictor fell into a state of contented torpor that lasted several days." },
+{ word: "Touchstone", meaning: "a standard; a test of authenticity or quality", example: "The size of a student’s vocabulary is a useful touchstone for judging the quality of his or her education." },
+{ word: "Tout", meaning: "to praise highly; to brag publicly about", example: "Advertisements touted the chocolateflavored toothpaste as getting rid of your sweet tooth while saving your teeth." },
+{ word: "Transcend", meaning: "to go beyond or above; to surpass", example: "The man who claimed to have invented a perpetual motion machine believed that he had transcended the laws of physics." },
+{ word: "Transgress", meaning: "to violate (a law); to sin", example: "The other side had transgressed so many provisions of the treaty that we had no choice but to go to war." },
+{ word: "Transient", meaning: "not staying for a long time; temporary", example: "The transient breeze provided some relief from the summer heat, but we were soon perspiring again." },
+{ word: "Trepidation", meaning: "fear; apprehension; nervous trembling", example: "The nursery school students were filled with trepidation when they saw the other children in their class dressed in their Halloween costumes." },
+{ word: "Turpitude", meaning: "shameful wickedness; depravity", example: "Paul was sacked by his boss because of a flagrant act of turpitude: He was caught stealing office supplies." },
+{ word: "Ubiquitous", meaning: "being everywhere at the same time", example: "The new beer commercial was ubiquitous—it seemed to be on every television channel at once." },
+{ word: "Unconscionable", meaning: "not controlled by conscience; unscrupulous", example: "Leaving a small child unattended all day long is an unconscionable act." },
+{ word: "Unctuous", meaning: "oily, both literally and figuratively; insincere", example: "Salad oil is literally unctuous." },
+{ word: "Uniform", meaning: "consistent; unchanging; the same for everyone", example: "Traffic laws are similar from one state to the next, but they aren’t uniform; each state has its own variations." },
+{ word: "Unremitting", meaning: "unceasing; unabated; relentless", example: "Superman waged an unremitting battle against evildoers everywhere." },
+{ word: "Unwitting", meaning: "unintentional; ignorant; not aware", example: "When Leo agreed to hold open the door of the bank, he became an unwitting accomplice to the bank robbery." },
+{ word: "Urbane", meaning: "poised; sophisticated; refined", example: "The British count was witty and urbane; all the hosts and hostesses wanted to have him at their parties." },
+{ word: "Usurp", meaning: "to seize wrongfully", example: "The children believed that their mother’s new boyfriend had usurped their father’s rightful place in their family." },
+{ word: "Utilitarian", meaning: "stressing usefulness or utility above all other qualities; pragmatic", example: "Jason’s interiordecorating philosophy was strictly utilitarian; if an object wasn’t genuinely useful, he didn’t want it in his home." },
+{ word: "Utopia", meaning: "an ideal society", example: "A country where nobody had to work would be Quentin’s idea of utopia." },
+{ word: "Vacillate", meaning: "to be indecisive; to waver", example: "We invited James to spend Thanksgiving with us, but he vacillated for so long that we finally became annoyed and disinvited him." },
+{ word: "Vapid", meaning: "without liveliness; dull; spiritless", example: "The novelist’s prose was so vapid that Mary couldn’t get beyond the first page." },
+{ word: "Vehement", meaning: "intense; forceful; violent", example: "Shaking his fist and stomping his foot, Gerry was vehement in his denial." },
+{ word: "Venal", meaning: "capable of being bribed; willing to do anything for money; corrupt", example: "The venal judge reversed his favorable ruling when the defendant refused to make good on his promised bribe." },
+{ word: "Venerate", meaning: "to revere; to treat as something holy, especially because of great age", example: "Lester venerated his grandfather; he worshiped the ground the old man limped on." },
+{ word: "Veracity", meaning: "truthfulness", example: "The veracity of young George Washington is apocryphal." },
+{ word: "Verbose", meaning: "using too many words; not succinct; circumlocutory", example: "Lee handed in a 178word final assignment; no one ever accused him of verbosity." },
+{ word: "Verisimilitude", meaning: "similarity to reality; the appearance of truth; looking like the real thing", example: "They used pine cones and old truck tires to make statues of Hollywood celebrities that were remarkable for their verisimilitude." },
+{ word: "Vernacular", meaning: "everyday speech; slang; idiom", example: "Our teacher said that we should save our vernacular for the street; in the classroom we should use proper grammar." },
+{ word: "Vestige", meaning: "a remaining bit of something; a last trace", example: "An old uniform and a tattered scrapbook were the only vestiges of the old man’s career as a professional athlete." },
+{ word: "Vex", meaning: "to annoy; to pester; to confuse", example: "Margaret vexed me by poking me with a long, sharp stick." },
+{ word: "Viable", meaning: "capable of living; workable", example: "Lupe’s plan for storing marshmallows in the dome of the Capitol just wasn’t viable." },
+{ word: "Vicarious", meaning: "experienced, performed, or suffered through someone else; living through the experiences of another as though they were one’s own experiences", example: "We all felt a vicarious thrill when the mayor’s daughter won fourth prize in the regional kickboxing competition." },
+{ word: "Vicissitude", meaning: "upheaval; natural change; change in fortune", example: "The vicissitudes of the stock market were too much for Karen; she decided to look for a job that would stay the same from one day to the next." },
+{ word: "Vilify", meaning: "to say vile things about; to defame", example: "The teacher was reprimanded for vilifying the slow student in front of the rest of the class." },
+{ word: "Vindicate", meaning: "to clear from all blame or suspicion; to justify", example: "George, having been accused of stealing money from the cash register, was vindicated when the store manager counted the money again and found that none was missing after all." },
+{ word: "Vindictive", meaning: "seeking revenge", example: "Jeremy apologized for denting the fender of my car, but I was feeling vindictive, so I filed a \$30 million lawsuit against him." },
+{ word: "Virtuoso", meaning: "a masterful musician; a masterful practitioner in some other field", example: "The concert audience fell silent when the virtuoso stepped forward to play the sonata on his electric banjo." },
+{ word: "Virulent", meaning: "extremely poisonous; malignant; full of hate", example: "The virulent disease quickly swept through the community, leaving many people dead and many more people extremely ill." },
+{ word: "Visionary", meaning: "a dreamer; someone with impractical goals or ideas about the future", example: "The candidate was a visionary; he had a lot of big ideas but no realistic plan for putting them into practice." },
+{ word: "Vitiate", meaning: "to make impure; to pollute", example: "For years a zealous group of individuals has campaigned against the use of fluoride in water, claiming that it has vitiated our bodies as well as our morals." },
+{ word: "Vitriolic", meaning: "caustic; full of bitterness", example: "The review of the new book was so vitriolic that we all wondered whether the reviewer had some personal grudge against the author." },
+{ word: "Vocation", meaning: "an occupation; a job", example: "If Stan could figure out how to make a vocation out of watching television and eating potato chips, he would be one of the most successful people in the world." },
+{ word: "Vociferous", meaning: "loud; noisy", example: "Randy often becomes vociferous during arguments. He doesn’t know what he believes, but he states it loudly nevertheless." },
+{ word: "Volatile", meaning: "quick to evaporate; highly unstable; explosive", example: "The situation in the Middle East was highly volatile; the smallest incident could have set off a war." },
+{ word: "Volition", meaning: "will; conscious choice", example: "Insects, lacking volition, simply aren’t as interesting as humans are." },
+{ word: "Wanton", meaning: "malicious; unjustifiable; unprovoked; egregious", example: "Terrorists commit wanton acts on a helpless populace to make their point." },
+{ word: "Willful", meaning: "deliberate; obstinate; insistent on having one's way", example: "The mother insisted that the killing committed by her son had not been willful, but the jury apparently believed that he had known what he was doing." },
+{ word: "Wistful", meaning: "yearning; sadly longing", example: "I felt wistful when I saw Steve's fancy new car. I wished that I had enough money to buy one for myself." },
+{ word: "Zealous", meaning: "enthusiastically devoted to something; fervent", example: "The zealous young policeman made so many arrests that the city jail soon became overcrowded." }
+  ];
+
+  const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const OPTION_LETTERS = ["A", "B", "C", "D", "E"];
+
+  let selectedLetter = null;
+  let letterPool = [];
+  let bag = [];
+  let current = null;
+  let answered = false;
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  const letterView = document.getElementById("letterView");
+  const letterGrid = document.getElementById("letterGrid");
+  const quizView = document.getElementById("quizView");
+  const backBtn = document.getElementById("backBtn");
+  const correctTally = document.getElementById("correctTally");
+  const wrongTally = document.getElementById("wrongTally");
+  const cardTag = document.getElementById("cardTag");
+  const wordDisplay = document.getElementById("wordDisplay");
+  const optionsList = document.getElementById("options");
+  const nextBtn = document.getElementById("nextBtn");
+  const exampleSentence = document.getElementById("exampleSentence");
+  const exampleText = document.getElementById("exampleText");
+
+  function shuffle(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlightWord(sentence, word){
+    const regex = new RegExp("\\b" + escapeRegExp(word) + "\\b", "i");
+    return sentence.replace(regex, match => "<strong>" + match + "</strong>");
+  }
+
+  function pickDistractors(word, count){
+    const chosen = new Set([word]);
+    const result = [];
+    const attemptLimit = WORDS.length * 5;
+    let attempts = 0;
+    while(result.length < count && attempts < attemptLimit){
+      attempts++;
+      const candidate = WORDS[Math.floor(Math.random() * WORDS.length)];
+      if(chosen.has(candidate.word)) continue;
+      chosen.add(candidate.word);
+      result.push(candidate);
+    }
+    return result;
+  }
+
+  function buildLetterGrid(){
+    const counts = {};
+    WORDS.forEach(w => {
+      const l = w.word[0].toUpperCase();
+      counts[l] = (counts[l] || 0) + 1;
+    });
+
+    ALPHABET.forEach(letter => {
+      const btn = document.createElement("button");
+      btn.className = "letter-btn";
+      btn.textContent = letter;
+      const count = counts[letter] || 0;
+      if(count === 0){
+        btn.disabled = true;
+      } else {
+        btn.title = count + " word" + (count === 1 ? "" : "s");
+        btn.addEventListener("click", () => selectLetter(letter));
+      }
+      letterGrid.appendChild(btn);
+    });
+  }
+
+  function selectLetter(letter){
+    selectedLetter = letter;
+    letterPool = WORDS.filter(w => w.word[0].toUpperCase() === letter);
+    correctCount = 0;
+    wrongCount = 0;
+    correctTally.textContent = "+0";
+    wrongTally.textContent = "-0";
+    bag = [];
+    letterView.hidden = true;
+    quizView.hidden = false;
+    nextCard();
+  }
+
+  function backToLetters(){
+    quizView.hidden = true;
+    letterView.hidden = false;
+  }
+
+  function nextCard(){
+    if(bag.length === 0) bag = shuffle([...letterPool]);
+    current = bag.pop();
+    answered = false;
+    nextBtn.hidden = true;
+    render();
+  }
+
+  function render(){
+    exampleSentence.classList.remove("is-visible");
+    exampleText.innerHTML = "";
+    cardTag.textContent = selectedLetter + " · Card " + (letterPool.length - bag.length) + " of " + letterPool.length;
+    wordDisplay.textContent = current.word;
+
+    const distractorCount = Math.min(4, WORDS.length - 1);
+    const distractors = pickDistractors(current.word, distractorCount);
+    const choices = shuffle([current, ...distractors]);
+
+    optionsList.innerHTML = "";
+    choices.forEach((choice, i) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.dataset.meaning = choice.meaning;
+      btn.innerHTML = '<span class="letter">' + OPTION_LETTERS[i] + '</span><span>' + choice.meaning + '</span>';
+      btn.addEventListener("click", () => handleAnswer(btn, choice));
+      li.appendChild(btn);
+      optionsList.appendChild(li);
+    });
+  }
+
+  function handleAnswer(btn, choice){
+    if(answered) return;
+    answered = true;
+
+    const allBtns = optionsList.querySelectorAll(".option");
+    allBtns.forEach(b => b.disabled = true);
+
+    if(choice.word === current.word){
+      btn.classList.add("correct");
+      correctCount++;
+      correctTally.textContent = "+" + correctCount;
+    } else {
+      btn.classList.add("wrong");
+      wrongCount++;
+      wrongTally.textContent = "-" + wrongCount;
+      allBtns.forEach(b => {
+        if(b.dataset.meaning === current.meaning) b.classList.add("correct");
+      });
+    }
+
+    exampleText.innerHTML = '<span class="label">In use —</span> ' + highlightWord(current.example, current.word);
+    exampleSentence.classList.add("is-visible");
+    nextBtn.hidden = false;
+  }
+
+  backBtn.addEventListener("click", backToLetters);
+  nextBtn.addEventListener("click", nextCard);
+
+  document.addEventListener("keydown", (e) => {
+    if(quizView.hidden || answered) return;
+    const idx = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 }[e.key];
+    if(idx === undefined) return;
+    const btn = optionsList.querySelectorAll(".option")[idx];
+    if(btn) btn.click();
+  });
+
+  buildLetterGrid();
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recabulary | Hibran</title>
+<style>
+  :root{
+    --ink:#151b19;
+    --ink-soft:#1d2724;
+    --paper:#efe6d2;
+    --paper-shadow: rgba(24,18,8,.45);
+    --text-dark:#2b2013;
+    --text-muted:#6b6152;
+    --text-on-dark:#cfc9b8;
+    --text-on-dark-dim:#8b9089;
+    --accent-gold:#c99a3e;
+    --hairline: rgba(43,32,19,.18);
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, var(--ink-soft) 0%, var(--ink) 70%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-on-dark);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 20px 60px;
+  }
+
+  header{
+    width:100%;
+    max-width:480px;
+    margin-bottom: 8vh;
+  }
+
+  .brand{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+    color: var(--text-on-dark);
+  }
+
+  main{
+    width:100%;
+    max-width: 480px;
+  }
+
+  .card{
+    background: var(--paper);
+    border-radius: 5px;
+    padding: 40px 36px 20px;
+    box-shadow: 0 20px 44px var(--paper-shadow);
+  }
+
+  .tag{
+    margin: 0 0 10px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .title{
+    margin: 0 0 10px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    line-height: 1.15;
+  }
+
+  .subtitle{
+    margin: 0 0 28px;
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .deck-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+
+  .deck-list li + li{
+    border-top: 1px solid var(--hairline);
+  }
+
+  .deck-link{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 14px;
+    padding: 20px 6px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.15rem;
+    color: var(--text-dark);
+    text-decoration:none;
+    border-radius: 3px;
+    transition: background .15s, padding-left .15s;
+  }
+  .deck-link:hover, .deck-link:focus-visible{
+    background: rgba(43,32,19,.06);
+    padding-left: 14px;
+  }
+  .deck-link:focus-visible{ outline: 2px solid var(--accent-gold); outline-offset: -2px; }
+
+  .deck-link .chevron{
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--text-muted);
+    flex-shrink:0;
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 32px 24px 14px; }
+    header{ margin-bottom: 6vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <header>
+      <span class="brand">Recabulary</span>
+    </header>
+
+    <main>
+      <div class="card">
+        <p class="tag">welcome to</p>
+        <h1 class="title">Recabulary</h1>
+        <p class="subtitle">Choose a deck</p>
+        <ul class="deck-list">
+          <li><a class="deck-link" href="lecsheet.html">Lecture Sheets' (48 words)<span class="chevron">›</span></a></li>
+          <li><a class="deck-link" href="wsfull.html">Wordsmart (834 words)<span class="chevron">›</span></a></li>
+          <li><a class="deck-link" href="wslw.html">Wordsmart Letter-wise<span class="chevron">›</span></a></li>
+          <li><a class="deck-link" href="sathp.html">SAT Hit Parade (245 words)<span class="chevron">›</span></a></li>
+          <li><a class="deck-link" href="grehp.html">GRE Hit Parade (200 words)<span class="chevron">›</span></a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

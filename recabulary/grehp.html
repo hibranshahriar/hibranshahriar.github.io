@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recabulary | Hibran</title>
+<style>
+  :root{
+    --ink:#151b19;
+    --ink-soft:#1d2724;
+    --paper:#efe6d2;
+    --paper-shadow: rgba(24,18,8,.45);
+    --text-dark:#2b2013;
+    --text-muted:#6b6152;
+    --text-on-dark:#cfc9b8;
+    --text-on-dark-dim:#8b9089;
+    --accent-correct:#5f8f6a;
+    --accent-wrong:#b8503f;
+    --accent-gold:#c99a3e;
+    --hairline: rgba(43,32,19,.18);
+    --hairline-dark: rgba(255,255,255,.1);
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, var(--ink-soft) 0%, var(--ink) 70%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-on-dark);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 20px 60px;
+  }
+
+  header{
+    width:100%;
+    max-width:520px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 8vh;
+  }
+
+  .brand{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+    color: var(--text-on-dark);
+  }
+
+  .score{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: .85rem;
+    color: var(--text-on-dark-dim);
+  }
+
+  .tally{
+    display:inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tally-correct{ background: var(--accent-correct); }
+  .tally-wrong{ background: var(--accent-wrong); }
+
+  main{
+    width:100%;
+    max-width: 480px;
+  }
+
+  .card{
+    background: var(--paper);
+    border-radius: 5px;
+    padding: 40px 36px 32px;
+    box-shadow: 0 20px 44px var(--paper-shadow);
+  }
+
+  .tag{
+    margin: 0 0 10px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .word{
+    margin: 0 0 30px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    text-transform: capitalize;
+    line-height: 1.15;
+  }
+
+  .options{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+
+  .options li + li{
+    border-top: 1px solid var(--hairline);
+  }
+
+  .option{
+    width:100%;
+    display:flex;
+    align-items:baseline;
+    gap: 14px;
+    background:none;
+    border:none;
+    text-align:left;
+    padding: 14px 6px;
+    font-size: 1.02rem;
+    color: var(--text-dark);
+    cursor:pointer;
+    border-radius: 3px;
+    transition: background .15s, color .15s;
+  }
+  .option:hover:not(:disabled){ background: rgba(43,32,19,.06); }
+  .option:focus-visible{ outline: 2px solid var(--accent-gold); outline-offset: -2px; }
+  .option:disabled{ cursor: default; }
+
+  .option .letter{
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--text-muted);
+    flex-shrink:0;
+  }
+
+  .option.correct{ background: var(--accent-correct); color:#fff; }
+  .option.correct .letter{ color: rgba(255,255,255,.75); }
+  .option.wrong{ background: var(--accent-wrong); color:#fff; text-decoration: line-through; opacity:.9; }
+  .option.wrong .letter{ color: rgba(255,255,255,.75); }
+
+  .next-btn{
+    display:block;
+    margin: 26px 0 0;
+    background: var(--accent-gold);
+    color: var(--ink);
+    border:none;
+    font-size: .92rem;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 3px;
+    cursor:pointer;
+    transition: filter .15s;
+  }
+  .next-btn:hover, .next-btn:focus-visible{ filter: brightness(1.08); }
+
+  .example{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+    overflow: hidden;
+  }
+  .example.is-visible{
+    grid-template-rows: 1fr;
+  }
+  .example-text{
+    min-height: 0;
+    overflow: hidden;
+    margin: 22px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    font-size: .95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .example-text .label{
+    font-style: normal;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+  .example-text strong{
+    font-style: normal;
+    font-weight: 600;
+    color: #9c6f1f;
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 32px 24px 26px; }
+    header{ margin-bottom: 6vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <header>
+      <span class="brand">Recabulary</span>
+      <span class="score">Score <span class="tally tally-correct" id="correctTally">+0</span><span class="tally tally-wrong" id="wrongTally">-0</span></span>
+    </header>
+
+    <main>
+      <div class="card">
+        <p class="tag" id="cardTag">Card 1 of 20</p>
+        <h1 class="word" id="wordDisplay">—</h1>
+        <ul class="options" id="options"></ul>
+        <div class="example" id="exampleSentence"><p class="example-text" id="exampleText"></p></div>
+        <button class="next-btn" id="nextBtn" hidden>Next card</button>
+      </div>
+    </main>
+  </div>
+
+<script>
+  const WORDS = [
+    { word: "Manifest", meaning: "visible; evident", example: "none" },
+{ word: "Conventional", meaning: "common; customary; unexceptional", example: "none" },
+{ word: "Partisan", meaning: "one who supports a particular person, cause, or idea", example: "none" },
+{ word: "Contentious", meaning: "argumentative; quarrelsome", example: "none" },
+{ word: "Lament", meaning: "to mourn", example: "none" },
+{ word: "Allusion", meaning: "an indirect reference to something else, especially something in literature; a hint", example: "none" },
+{ word: "Arbiter", meaning: "one who decides; a judge", example: "none" },
+{ word: "Inherent", meaning: "part of the essential nature of something; intrinsic", example: "none" },
+{ word: "Paradox", meaning: "a true statement or phenomenon that nonetheless seems to contradict itself; an untrue statement or phenomenon that nonetheless seems logical", example: "none" },
+{ word: "Cynic", meaning: "one who deeply distrusts human nature; one who believes people are motivated only by selfishness", example: "none" },
+{ word: "Exposition", meaning: "expounding or explaining; explanatory treatise", example: "none" },
+{ word: "Consensus", meaning: "unanimity or near unanimity", example: "none" },
+{ word: "Comprehensive", meaning: "covering or including everything", example: "none" },
+{ word: "Sagacious", meaning: "wise; possessing wisdom derived from experience or learning", example: "none" },
+{ word: "Precipitate", meaning: "to cause to happen abruptly", example: "none" },
+{ word: "Pervade", meaning: "to spread throughout", example: "none" },
+{ word: "Discourse", meaning: "to converse; to formally discuss a subject", example: "none" },
+{ word: "Conjure", meaning: "to summon or bring into being as if by magic", example: "none" },
+{ word: "Sanction", meaning: "authorize or approve; ratify or confirm", example: "none" },
+{ word: "Genial", meaning: "cheerful and pleasant; friendly; helpful", example: "none" },
+{ word: "Indulgent", meaning: "lenient; yielding to desire", example: "none" },
+{ word: "Inert", meaning: "inactive; sluggish; not reacting chemically", example: "none" },
+{ word: "Levee", meaning: "an embankment designed to prevent the flooding of a river", example: "none" },
+{ word: "Erratic", meaning: "unpredictable or wandering", example: "none" },
+{ word: "Luminous", meaning: "giving off light; glowing; bright", example: "none" },
+{ word: "Abstinent", meaning: "abstaining; voluntarily not doing something", example: "none" },
+{ word: "Placid", meaning: "pleasantly calm; peaceful", example: "none" },
+{ word: "Exuberant", meaning: "extremely joyful or vigorous; profuse in growth", example: "none" },
+{ word: "Impede", meaning: "to hinder; to obstruct; to slow something down", example: "none" },
+{ word: "Permeate", meaning: "to spread or seep through; to penetrate", example: "none" },
+{ word: "Audacity", meaning: "boldness; reckless daring; impertinence", example: "none" },
+{ word: "Indignant", meaning: "angry, especially as a result of something unjust or unworthy", example: "none" },
+{ word: "Implicit", meaning: "implied rather than expressly stated", example: "none" },
+{ word: "Renaissance/renascence", meaning: "a rebirth or revival", example: "none" },
+{ word: "Superfluous", meaning: "extra; unnecessary", example: "none" },
+{ word: "Litigate", meaning: "to try in court; to engage in legal proceedings", example: "none" },
+{ word: "Vex", meaning: "to annoy; to pester; to confuse", example: "none" },
+{ word: "Anomaly", meaning: "an aberration; an irregularity; a deviation", example: "none" },
+{ word: "Bereave", meaning: "to deprive or leave desolate, especially through death", example: "none" },
+{ word: "Connoisseur", meaning: "an expert, particularly in matters of art or taste", example: "none" },
+{ word: "Corroborate", meaning: "to confirm; to back up with evidence", example: "none" },
+{ word: "Frenetic", meaning: "frantic; frenzied", example: "none" },
+{ word: "Polemic", meaning: "a powerful argument made in refutation of something", example: "none" },
+{ word: "Synthesis", meaning: "the combining of parts to form a whole", example: "none" },
+{ word: "Feasible", meaning: "able to be done", example: "none" },
+{ word: "Forbear", meaning: "to refrain from; to abstain", example: "none" },
+{ word: "Genre", meaning: "an artistic class or category", example: "none" },
+{ word: "Vindicate", meaning: "to clear from all blame or suspicion", example: "none" },
+{ word: "Conciliatory", meaning: "making peace; attempting to resolve a dispute through goodwill", example: "none" },
+{ word: "Squalid", meaning: "filthy; repulsive; wretched; degraded", example: "none" },
+{ word: "Inept", meaning: "clumsy; incompetent", example: "none" },
+{ word: "Mandatory", meaning: "authoritatively ordered or commanded; necessary", example: "none" },
+{ word: "Disseminate", meaning: "to scatter or spread widely", example: "none" },
+{ word: "Eclectic", meaning: "choosing the best from many sources; drawn from many sources", example: "none" },
+{ word: "Idyllic", meaning: "charming in a rustic way; naturally peaceful", example: "none" },
+{ word: "Pristine", meaning: "original; unspoiled; pure", example: "none" },
+{ word: "Prodigy", meaning: "an extremely talented child; an extraordinary accomplishment or occurrence", example: "none" },
+{ word: "Frugal", meaning: "economical; pennypinching", example: "none" },
+{ word: "Qualify", meaning: "to modify or restrict", example: "none" },
+{ word: "Decorous", meaning: "in good taste; orderly", example: "none" },
+{ word: "Infer", meaning: "to conclude; to deduce", example: "none" },
+{ word: "Ostentatious", meaning: "excessively conspicuous; showing off", example: "none" },
+{ word: "Pathology", meaning: "the science of diseases; any deviation from a healthy, normal condition", example: "none" },
+{ word: "Plumb", meaning: "to measure the depth of something", example: "none" },
+{ word: "Spurious", meaning: "doubtful; bogus; false", example: "none" },
+{ word: "Subjugate", meaning: "to subdue and dominate; to enslave", example: "none" },
+{ word: "Visionary", meaning: "a dreamer; someone with impractical goals or ideas about the future", example: "none" },
+{ word: "Reciprocal", meaning: "mutual; shared; interchangeable", example: "none" },
+{ word: "Antipathy", meaning: "firm dislike; dislike; hatred", example: "none" },
+{ word: "Dissonant", meaning: "inharmonious; in disagreement", example: "none" },
+{ word: "Palliate", meaning: "to hide the seriousness of something with excuses or apologies", example: "none" },
+{ word: "Substantive", meaning: "having substance; real; essential; solid; substantial", example: "none" },
+{ word: "Surreptitious", meaning: "sneaky; secret", example: "none" },
+{ word: "Equivocal", meaning: "ambiguous; intentionally confusing; capable of being interpreted in more than one way", example: "none" },
+{ word: "Flippant", meaning: "frivolously shallow and disrespectful", example: "none" },
+{ word: "Impervious", meaning: "not allowing anything to pass through; impenetrable", example: "none" },
+{ word: "Judicious", meaning: "exercising sound judgment", example: "none" },
+{ word: "Laconic", meaning: "using few words, especially to the point of being rude", example: "none" },
+{ word: "Piquant", meaning: "pungent", example: "none" },
+{ word: "Satiric", meaning: "using sarcasm or irony", example: "none" },
+{ word: "Sullen", meaning: "gloomy or dismal", example: "none" },
+{ word: "Tacit", meaning: "implied; not spoken", example: "none" },
+{ word: "Tractable", meaning: "easily managed or controlled; obedient", example: "none" },
+{ word: "Impromptu", meaning: "without preparation; on the spur of the moment", example: "none" },
+{ word: "Parallel", meaning: "a comparison made between two things", example: "none" },
+{ word: "Sterile", meaning: "unimaginative; unfruitful; infertile", example: "none" },
+{ word: "Debauchery", meaning: "corruption by sensuality; intemperance; wild living", example: "none" },
+{ word: "Deleterious", meaning: "harmful", example: "none" },
+{ word: "Disinterested", meaning: "unbiased", example: "none" },
+{ word: "Fecund", meaning: "fertile; productive", example: "none" },
+{ word: "Hermetic", meaning: "impervious to external influence; airtight", example: "none" },
+{ word: "Salubrious", meaning: "promoting health", example: "none" },
+{ word: "Foster", meaning: "to promote the growth or development of", example: "none" },
+{ word: "Transitory", meaning: "not staying for a long time; temporary", example: "none" },
+{ word: "Cacophony", meaning: "a harshsounding mixture of words, voices, or sounds", example: "none" },
+{ word: "Goad", meaning: "to urge forcefully; to taunt someone into doing something", example: "none" },
+{ word: "Implement", meaning: "to carry out", example: "none" },
+{ word: "Ingenuous", meaning: "unwarily simple; candid; naive", example: "none" },
+{ word: "Malleable", meaning: "easy to shape or bend", example: "none" },
+{ word: "Pungent", meaning: "forceful; sharp or biting to the taste or smell", example: "none" },
+{ word: "Savor", meaning: "to linger on the taste or smell of something", example: "none" },
+{ word: "Correlate", meaning: "to find or show the relationship of two things", example: "none" },
+{ word: "Facetious", meaning: "humorous; not serious; clumsily humorous", example: "none" },
+{ word: "Kinship", meaning: "natural or family relationship", example: "none" },
+{ word: "Petulant", meaning: "rude; cranky; ill tempered", example: "none" },
+{ word: "Rampart", meaning: "a fortification; a bulwark or defense", example: "none" },
+{ word: "Temerity", meaning: "boldness; recklessness; audacity", example: "none" },
+{ word: "Truculent", meaning: "savagely brutal; aggressively hostile", example: "none" },
+{ word: "Incisive", meaning: "cutting right to the heart of the matter", example: "none" },
+{ word: "Aberration", meaning: "something not typical; a deviation from the standard", example: "none" },
+{ word: "Abstemious", meaning: "sparing or moderate, especially in eating and drinking", example: "none" },
+{ word: "Alacrity", meaning: "cheerful readiness; liveliness or eagerness", example: "none" },
+{ word: "Allocate", meaning: "to distribute; assign; allot", example: "none" },
+{ word: "Arid", meaning: "extremely dry; unimaginative; dull", example: "none" },
+{ word: "Beget", meaning: "to cause or produce; to engender", example: "none" },
+{ word: "Conundrum", meaning: "a puzzle; a riddle", example: "none" },
+{ word: "Debacle", meaning: "violent breakdown; sudden overthrow", example: "none" },
+{ word: "Doggerel", meaning: "comic, loose verse", example: "none" },
+{ word: "Exorbitance", meaning: "an exceedingly large amount", example: "none" },
+{ word: "Garrulous", meaning: "extremely chatty or talkative; wordy or diffuse", example: "none" },
+{ word: "Intransigent", meaning: "uncompromising; stubborn", example: "none" },
+{ word: "Maverick", meaning: "a nonconformist; a rebel", example: "none" },
+{ word: "Turpitude", meaning: "shameful wickedness or depravity", example: "none" },
+{ word: "Axiom", meaning: "a selfevident rule or truth; a widely accepted saying", example: "none" },
+{ word: "Beneficent", meaning: "doing good", example: "none" },
+{ word: "Capricious", meaning: "unpredictable; likely to change at any moment", example: "none" },
+{ word: "Circumlocution", meaning: "an indirect expression; use of wordy or evasive language", example: "none" },
+{ word: "Impugn", meaning: "to attack, especially to attack the truth or integrity of something", example: "none" },
+{ word: "Incursion", meaning: "a hostile invasion", example: "none" },
+{ word: "Invective", meaning: "insulting or abusive speech", example: "none" },
+{ word: "Placate", meaning: "to pacify; to appease; to soothe", example: "none" },
+{ word: "Temperament", meaning: "one’s disposition or character", example: "none" },
+{ word: "Antiseptic", meaning: "free from germs; exceptionally clean", example: "none" },
+{ word: "Lax", meaning: "not strict or firm; careless or negligent; loose or slack", example: "none" },
+{ word: "Accolade", meaning: "an award or honor; high praise", example: "none" },
+{ word: "Assiduous", meaning: "hardworking; busy; diligent", example: "none" },
+{ word: "Brook", meaning: "to bear or tolerate; to put up with something", example: "none" },
+{ word: "Desiccate", meaning: "to dry out", example: "none" },
+{ word: "Erudite", meaning: "scholarly; deeply learned", example: "none" },
+{ word: "Flag", meaning: "to weaken; to slow down", example: "none" },
+{ word: "Impudent", meaning: "bold; impertinent", example: "none" },
+{ word: "Baleful", meaning: "menacing; harmful", example: "none" },
+{ word: "Divergent", meaning: "differing in opinion; deviating", example: "none" },
+{ word: "Effluvium", meaning: "a disagreeable or noxious vapor; an escaping gas", example: "none" },
+{ word: "Evanescent", meaning: "vanishing or fading; scarcely perceptible", example: "none" },
+{ word: "Exigent", meaning: "demanding prompt action; urgent", example: "none" },
+{ word: "Exonerate", meaning: "to free completely from blame", example: "none" },
+{ word: "Flaunt", meaning: "to show off; to display ostentatiously", example: "none" },
+{ word: "Improvident", meaning: "lacking prudent foresight; careless", example: "none" },
+{ word: "Ineluctable", meaning: "inescapable; unavoidable", example: "none" },
+{ word: "Mellifluous", meaning: "sweetly flowing", example: "none" },
+{ word: "Oscillate", meaning: "to swing back and forth; to fluctuate", example: "none" },
+{ word: "Ossify", meaning: "to convert into bone; to become rigid", example: "none" },
+{ word: "Probity", meaning: "integrity; uprightness; honesty", example: "none" },
+{ word: "Proselytize", meaning: "to convert someone from one religion or doctrine to another; to recruit converts to a religion or doctrine", example: "none" },
+{ word: "Pundit", meaning: "a learned person; an expert in a particular field", example: "none" },
+{ word: "Recondite", meaning: "hard to understand; over one’s head", example: "none" },
+{ word: "Spendthrift", meaning: "extravagant or wasteful, especially with money", example: "none" },
+{ word: "Vacuous", meaning: "lacking ideas or intelligence", example: "none" },
+{ word: "Coda", meaning: "a passage concluding a composition (in music)", example: "none" },
+{ word: "Penchant", meaning: "strong taste or liking", example: "none" },
+{ word: "Abstruse", meaning: "hard to understand or grasp", example: "none" },
+{ word: "Cognizant", meaning: "perceptive; observant", example: "none" },
+{ word: "Gainsay", meaning: "to deny; to speak or act against", example: "none" },
+{ word: "Garner", meaning: "to gather and store", example: "none" },
+{ word: "Obdurate", meaning: "stubborn; inflexible", example: "none" },
+{ word: "Propinquity", meaning: "nearness", example: "none" },
+{ word: "Ribald", meaning: "vulgar or indecent speech or language, as in a ribald joke", example: "none" },
+{ word: "Sinuous", meaning: "having many curves", example: "none" },
+{ word: "Veracity", meaning: "truthfulness", example: "none" },
+{ word: "Chronology", meaning: "an order of events from earliest to latest", example: "none" },
+{ word: "Economical", meaning: "frugal; thrifty", example: "none" },
+{ word: "Conjoin", meaning: "to join or act together", example: "none" },
+{ word: "Panegyric", meaning: "lofty praise", example: "none" },
+{ word: "Pedagogue", meaning: "a strict, overly academic teacher", example: "none" },
+{ word: "Reprobate", meaning: "a wicked, sinful, depraved person", example: "none" },
+{ word: "Untoward", meaning: "unfavorable or unfortunate; improper", example: "none" },
+{ word: "Welter", meaning: "a confused mass; a commotion or turmoil", example: "none" },
+{ word: "Inchoate", meaning: "just beginning; not organized or orderly", example: "none" },
+{ word: "Problematic", meaning: "doubtful or questionable", example: "none" },
+{ word: "Timbre", meaning: "the quality of a sound independent of pitch and loudness", example: "none" },
+{ word: "Disavow", meaning: "to deny", example: "none" },
+{ word: "Gerrymander", meaning: "to divide a state or county into election districts to gain political advantage", example: "none" },
+{ word: "Repugnant", meaning: "distasteful or offensive", example: "none" },
+{ word: "Taut", meaning: "tightly drawn, as a rope; emotionally tense", example: "none" },
+{ word: "Cajole", meaning: "to deceptively persuade someone to do something he or she doesn’t want to do", example: "none" },
+{ word: "Discomfit", meaning: "to confuse, deject, frustrate, deceive", example: "none" },
+{ word: "Accrete", meaning: "to increase by growth or addition", example: "none" },
+{ word: "Contumacious", meaning: "stubbornly rebellious or disobedient", example: "none" },
+{ word: "Fulsome", meaning: "disgusting or repulsive", example: "none" },
+{ word: "Homeostasis", meaning: "the tendency of an organic system to maintain internal stability", example: "none" },
+{ word: "Hone", meaning: "to sharpen", example: "none" },
+{ word: "Insolvent", meaning: "unable to pay one’s bills", example: "none" },
+{ word: "Ligneous", meaning: "woodlike", example: "none" },
+{ word: "Motility", meaning: "spontaneous movement", example: "none" },
+{ word: "Munificent", meaning: "very generous; lavish", example: "none" },
+{ word: "Neophyte", meaning: "a beginner", example: "none" },
+{ word: "Rivet", meaning: "to fix one’s attention on", example: "none" },
+{ word: "Saturnine", meaning: "a sluggish, gloomy temperament", example: "none" },
+{ word: "Viscous", meaning: "thick and sticky", example: "none" },
+  ];
+
+  let bag = [];
+  let current = null;
+  let answered = false;
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  const wordDisplay = document.getElementById("wordDisplay");
+  const optionsList = document.getElementById("options");
+  const cardTag = document.getElementById("cardTag");
+  const correctTally = document.getElementById("correctTally");
+  const wrongTally = document.getElementById("wrongTally");
+  const nextBtn = document.getElementById("nextBtn");
+  const exampleSentence = document.getElementById("exampleSentence");
+  const exampleText = document.getElementById("exampleText");
+  const LETTERS = ["A", "B", "C", "D", "E"];
+
+  function shuffle(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function refillBag(){
+    bag = shuffle([...WORDS]);
+  }
+
+  function pickDistractors(word, count){
+    const chosen = new Set([word]);
+    const result = [];
+    const attemptLimit = WORDS.length * 5;
+    let attempts = 0;
+    while(result.length < count && attempts < attemptLimit){
+      attempts++;
+      const candidate = WORDS[Math.floor(Math.random() * WORDS.length)];
+      if(chosen.has(candidate.word)) continue;
+      chosen.add(candidate.word);
+      result.push(candidate);
+    }
+    return result;
+  }
+
+  function nextCard(){
+    if(bag.length === 0) refillBag();
+    current = bag.pop();
+    answered = false;
+    nextBtn.hidden = true;
+    render();
+  }
+
+  function render(){
+    exampleSentence.classList.remove("is-visible");
+    exampleText.innerHTML = "";
+    cardTag.textContent = "Card " + (WORDS.length - bag.length) + " of " + WORDS.length;
+    wordDisplay.textContent = current.word;
+
+    const distractorCount = Math.min(4, WORDS.length - 1);
+    const distractors = pickDistractors(current.word, distractorCount);
+    const choices = shuffle([current, ...distractors]);
+
+    optionsList.innerHTML = "";
+    choices.forEach((choice, i) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.dataset.meaning = choice.meaning;
+      btn.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span>' + choice.meaning + '</span>';
+      btn.addEventListener("click", () => handleAnswer(btn, choice));
+      li.appendChild(btn);
+      optionsList.appendChild(li);
+    });
+  }
+
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlightWord(sentence, word){
+    const regex = new RegExp("\\b" + escapeRegExp(word) + "\\b", "i");
+    return sentence.replace(regex, match => "<strong>" + match + "</strong>");
+  }
+
+  function handleAnswer(btn, choice){
+    if(answered) return;
+    answered = true;
+
+    const allBtns = optionsList.querySelectorAll(".option");
+    allBtns.forEach(b => b.disabled = true);
+
+    if(choice.word === current.word){
+      btn.classList.add("correct");
+      correctCount++;
+      correctTally.textContent = "+" + correctCount;
+    } else {
+      btn.classList.add("wrong");
+      wrongCount++;
+      wrongTally.textContent = "-" + wrongCount;
+      allBtns.forEach(b => {
+        if(b.dataset.meaning === current.meaning) b.classList.add("correct");
+      });
+    }
+
+    exampleText.innerHTML = '<span class="label">In use —</span> ' + highlightWord(current.example, current.word);
+    exampleSentence.classList.add("is-visible");
+    nextBtn.hidden = false;
+  }
+
+  nextBtn.addEventListener("click", nextCard);
+
+  document.addEventListener("keydown", (e) => {
+    if(answered) return;
+    const idx = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 }[e.key];
+    if(idx === undefined) return;
+    const btn = optionsList.querySelectorAll(".option")[idx];
+    if(btn) btn.click();
+  });
+
+  nextCard();
+</script>
+</body>
+</html>

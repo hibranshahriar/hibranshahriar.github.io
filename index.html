@@ -1,62 +1,762 @@
-<title>Hibran</title>
-<link rel="icon" type="image/x-icon" href="favicon.png">
-
-<link rel="stylesheet" href="style.css">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Hibran Shahriar</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+
+:root{
+    --bg: #d8d3c2;
+    --text: #3b3a35;
+    --muted: #6b685d;
+    --line: rgba(50,50,45,0.12);
+    --dark: #2d2c28;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Montserrat", sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+    letter-spacing:0.08em;
+    position:relative;
+}
+
+/* PAPER TEXTURE */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    opacity:0.08;
+    pointer-events:none;
+
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            rgba(0,0,0,0.04) 0px,
+            rgba(0,0,0,0.04) 1px,
+            transparent 1px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(0,0,0,0.02) 0px,
+            rgba(0,0,0,0.02) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+}
+
+/* TECHNICAL OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.diagonal{
+    position:absolute;
+    width:200%;
+    height:1px;
+    background:var(--line);
+    transform:rotate(45deg);
+}
+
+.d1{ top:10%; left:-40%; }
+.d2{ top:28%; left:-30%; }
+.d3{ top:52%; left:-50%; }
+.d4{ top:72%; left:-35%; }
+
+.circle{
+    position:absolute;
+    border:1px solid var(--line);
+    border-radius:50%;
+}
+
+.c1{
+    width:700px;
+    height:700px;
+    right:-300px;
+    bottom:-250px;
+}
+
+.c2{
+    width:500px;
+    height:500px;
+    left:-200px;
+    top:-120px;
+}
+
+/* FRAME */
+
+.frame{
+    position:fixed;
+    inset:20px;
+    border:1px solid rgba(20,20,20,0.55);
+    pointer-events:none;
+}
+
+.frame::before,
+.frame::after{
+    content:"";
+    position:absolute;
+    left:0;
+    width:100%;
+    height:10px;
+
+    background-image:
+    radial-gradient(circle, rgba(30,30,30,0.6) 1px, transparent 2px);
+
+    background-size:22px 10px;
+}
+
+.frame::before{
+    top:-12px;
+}
+
+.frame::after{
+    bottom:-12px;
+}
+
+/* MAIN */
+
+main{
+    width:min(1400px, calc(100% - 120px));
+    margin:0 auto;
+    padding-top:120px;
+    padding-bottom:180px;
+}
+
+/* HERO */
+
+.hero{
+    margin-bottom:100px;
+}
+
+.hero-title{
+    font-size:5rem;
+    font-weight:200;
+    letter-spacing:0.22em;
+    line-height:1;
+    margin-bottom:25px;
+}
+
+.hero-oneliner{
+    font-size:1rem;
+    color:var(--dark);
+    margin-bottom:20px;
+}
+
+.hero-description{
+    max-width:700px;
+    color:var(--muted);
+    line-height:2;
+    font-size:0.9rem;
+}
+
+/* WORKS */
+
+.works{
+    display:flex;
+    flex-direction:column;
+    gap:35px;
+}
+
+/* FEATURED CARD */
+
+.featured-card{
+    display:grid;
+    grid-template-columns:60% 40%;
+    border:1px solid rgba(0,0,0,0.18);
+    min-height:420px;
+}
+
+.featured-image{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+    border-right:1px solid rgba(0,0,0,0.15);
+}
+
+.featured-image a{
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.featured-image img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    display:block;
+}
+
+.featured-content{
+    padding:50px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.featured-label{
+    font-size:0.7rem;
+    color:var(--muted);
+    margin-bottom:25px;
+}
+
+.featured-title{
+    font-size:2.6rem;
+    font-weight:200;
+    letter-spacing:0.16em;
+    line-height:1.1;
+    margin-bottom:25px;
+}
+
+.featured-description{
+    color:var(--muted);
+    line-height:2;
+    font-size:0.9rem;
+}
+
+/* SMALL WORKS */
+
+.work-card{
+    display:grid;
+    grid-template-columns:40% 60%;
+    border:1px solid rgba(0,0,0,0.18);
+    min-height:240px;
+}
+
+.work-image{
+    padding:25px;
+    border-right:1px solid rgba(0,0,0,0.15);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.work-image a{
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.work-image img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    display:block;
+}
+
+.work-content{
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.work-title{
+    font-size:1.4rem;
+    font-weight:300;
+    letter-spacing:0.14em;
+    margin-bottom:18px;
+}
+
+.work-description{
+    color:var(--muted);
+    line-height:1.9;
+    font-size:0.85rem;
+}
+
+/* BUTTONS */
+
+.button-row{
+    margin-top:40px;
+    display:flex;
+    gap:20px;
+}
+
+.ui-button{
+    background:none;
+    border:1px solid rgba(0,0,0,0.25);
+    color:var(--text);
+
+    padding:16px 38px;
+
+    font-family:inherit;
+    font-size:0.8rem;
+    letter-spacing:0.15em;
+
+    cursor:pointer;
+    transition:0.25s;
+}
+
+.ui-button:hover{
+    background:rgba(0,0,0,0.08);
+}
+
+/* FOOTER */
+
+footer{
+    width:min(1400px, calc(100% - 120px));
+    margin:0 auto;
+
+    padding-bottom:60px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+}
+
+.footer-left h2{
+    font-size:1.4rem;
+    font-weight:200;
+    letter-spacing:0.2em;
+    margin-bottom:12px;
+}
+
+.footer-left p{
+    color:var(--muted);
+    line-height:1.8;
+    font-size:0.8rem;
+}
+
+.footer-right{
+    display:flex;
+    gap:60px;
+}
+
+.footer-block span{
+    display:block;
+    margin-bottom:10px;
+    color:var(--muted);
+    font-size:0.7rem;
+}
+
+.footer-block a,
+.footer-block p{
+    font-size:0.85rem;
+    color:var(--text);
+    text-decoration:none;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .featured-card,
+    .work-card{
+        grid-template-columns:1fr;
+    }
+
+    .featured-image,
+    .work-image{
+        border-right:none;
+        border-bottom:1px solid rgba(0,0,0,0.15);
+    }
+
+    .hero-title{
+        font-size:3rem;
+    }
+}
+
+@media(max-width:700px){
+
+    main,
+    footer{
+        width:calc(100% - 50px);
+    }
+
+    .hero-title{
+        font-size:2.3rem;
+    }
+
+    .button-row{
+        flex-direction:column;
+    }
+
+    footer{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:40px;
+    }
+
+    .footer-right{
+        flex-direction:column;
+        gap:25px;
+    }
+}
+
+.top-logo{
+    position:fixed;
+    top:48px;
+    right:60px;
+
+    width:150px;
+    height:150px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:50;
+}
+
+.top-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+
+    opacity:0.9;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+
+    .top-logo{
+        top:35px;
+        right:25px;
+
+        width:34px;
+        height:34px;
+    }
+
+}
+
+.ui-button{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+
+    text-decoration:none;
+}
+
+.work-card.reverse .work-image{
+    order:2;
+    border-right:none;
+    border-left:1px solid rgba(0,0,0,0.15);
+}
+
+.work-card.reverse .work-content{
+    order:1;
+}
+
+.vertical-work-card{
+    border:1px solid rgba(0,0,0,0.18);
+
+    display:flex;
+    flex-direction:column;
+
+    min-height:500px;
+}
+
+.vertical-work-image{
+    width:100%;
+
+    padding:30px;
+
+    border-bottom:1px solid rgba(0,0,0,0.15);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.vertical-work-image a{
+    width:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.vertical-work-image img{
+    width:100%;
+    height:auto;
+
+    display:block;
+
+    object-fit:contain;
+}
+
+.vertical-work-content{
+    padding:40px;
+}
+
+.vertical-work-title{
+    font-size:1.6rem;
+    font-weight:300;
+    letter-spacing:0.14em;
+
+    margin-bottom:18px;
+}
+
+.vertical-work-description{
+    color:var(--muted);
+
+    line-height:1.9;
+
+    font-size:0.85rem;
+}
+
+</style>
 </head>
-<header>
-    <h1>Hibran Shahriar</h1>
-    <H3>Just above average</H3>
-</header>
 
-<br>
-<hr>
-<br>
+<body>
 
-<div class="container">
-    <!--2d-->
-    <div><img src="2d.png" alt=""></div>
-    <div><img src="map_edit.png"></div>
-    <div><img src="cryptobiote.png" alt=""></div>
-    <div><img src="beheritto.png" alt=""></div>
-    <div><img src="markofsac3.png" alt=""></div>
-    <div><img src="ordbanner.png" alt=""></div>
-    <div><img src="monsterlogo-bartex1.png" alt=""></div>
-    <div><img src="nodebanner.png" alt=""></div>
-    <!--3d-->
-    <div><img src="3d.png" alt=""></div>
-    <div><img src="donut.jpg"></div>
-    <div><img src="couchpro.jpg"></div>
-    <div><img src="lego.jpg" alt=""></div>
-    <div><img src="chairuv.jpg" alt=""></div>
-    <div><img src="carbon.png" alt=""></div>
-    <div><img src="planetsatellite.jpg" alt=""></div>
-    <div><img src="bedroom.jpg" alt=""></div>
-    <div><img src="plane.jpg" alt=""></div>
-    <div><img src="alley.jpg"></div>
-    <div><img src="chairtable.jpg" alt=""></div>
-    <div><img src="bg.png" alt=""></div>
-    <div><img src="syringeampule.png" alt=""></div>
-    <div><img src="seachopper.jpg" alt=""></div>
-    <div><img src="forest.jpg" alt=""></div>
-    <div><img src="droid.jpg" alt=""></div>
-    <div><img src="blackhole.png" alt=""></div>
-    <div><img src="dice.jpg" alt=""></div>
-    <div><img src="hallway.jpg" alt=""></div>
-    <div><img src="sign.png"></div>
+<div class="overlay">
+    <div class="diagonal d1"></div>
+    <div class="diagonal d2"></div>
+    <div class="diagonal d3"></div>
+    <div class="diagonal d4"></div>
+
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
 </div>
 
-<br>
-<hr>
+<div class="frame"></div>
 
-<div class="foot">
-    <p>2d, 3d and mixed media work presented here span almost 3 years in time (2021-2024) hence the large difference in quality and visual style</p>
-    <h3>Contact</h3>
-    <p><u>hibranshahriar2006@gmail.com</u></p>
-    <p>Also available on Facebook as <a href="https://www.facebook.com/hibran.shahriar/" target=”_blank”>Hibran Shahriar</a></p>
-    <p>Some of these renders can be viewed in full resolution on my <a href="https://www.artstation.com/epycxt" target=”_blank”>Artstation</a></p>
+<div class="top-logo">
+    <img src="logo_s.png" alt="Logo">
 </div>
+
+<main>
+
+    <section class="hero">
+
+        <h1 class="hero-title">
+            HIBRAN SHAHRIAR
+        </h1>
+
+        <p class="hero-oneliner">
+            Student, Hobbyist, Artist.
+        </p>
+
+        <p class="hero-description">
+            This webpage is under construction. To see the old page, scroll down and head to Legacy.
+        </p>
+
+    </section>
+
+    <section class="works">
+
+        <!-- FEATURED -->
+
+        <article class="featured-card">
+
+            <div class="featured-image">
+                <a href="#">
+                    <img src="tba_h.png">
+                </a>
+            </div>
+
+            <div class="featured-content">
+
+                <div class="featured-label">
+                    [ FEATURED WORK ]
+                </div>
+
+                <h2 class="featured-title">
+                    TO BE<br>
+                    ANNOUNCED
+                </h2>
+
+                <p class="featured-description">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit ea quae qui accusamus quam, dolorem sunt velit voluptatem quod iste.
+                </p>
+
+            </div>
+
+        </article>
+
+        <article class="work-card reverse">
+            <div class="work-image">
+                <a href="#">
+                    <img src="tba_h.png">
+                </a>
+            </div>
+
+            <div class="work-content">
+
+                <h3 class="work-title">
+                    TO BE ANNOUNCED
+                </h3>
+
+                <p class="work-description">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates voluptate est tenetur, repellat ea at beatae voluptatibus enim sed fugit.
+                </p>
+
+            </div>
+        </article>
+
+        <!-- WORK 1 -->
+
+        <article class="work-card">
+
+            <div class="work-image">
+                <a href="#">
+                    <img src="tba_s.png">
+                </a>
+            </div>
+
+            <div class="work-content">
+
+                <h3 class="work-title">
+                    TO BE ANNOUNCED
+                </h3>
+
+                <p class="work-description">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem reprehenderit tempora rerum cum quas veritatis maiores omnis vero doloremque earum?
+                </p>
+
+            </div>
+
+        </article>
+
+        <!-- WORK 2 -->
+
+        <article class="work-card">
+
+            <div class="work-image">
+                <a href="#">
+                    <img src="tba_s.png">
+                </a>
+            </div>
+
+            <div class="work-content">
+
+                <h3 class="work-title">
+                    TO BE ANNOUNCED
+                </h3>
+
+                <p class="work-description">
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel doloremque deserunt sunt. Aspernatur animi doloribus unde dicta cum maiores mollitia.
+                </p>
+
+            </div>
+
+        </article>
+
+        <!-- WORK 3 -->
+
+        <article class="work-card">
+
+            <div class="work-image">
+                <a href="#">
+                    <img src="tba_p.png">
+                </a>
+            </div>
+
+            <div class="work-content">
+
+                <h3 class="work-title">
+                    TO BE ANNOUNCED
+                </h3>
+
+                <p class="work-description">
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium, minus id odit dicta laboriosam necessitatibus numquam sed soluta beatae libero!
+                </p>
+
+            </div>
+
+        </article>
+
+        <article class="vertical-work-card">
+
+            <div class="vertical-work-image">
+                <a href="#">
+                    <img src="tba_w.png" alt="">
+                </a>
+            </div>
+
+            <div class="vertical-work-content">
+
+                <h3 class="vertical-work-title">
+                    TO BE ANNOUNCED
+                </h3>
+
+                <p class="vertical-work-description">
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi iusto magni voluptas ab quidem labore sit voluptates, vel omnis laborum cumque similique quos minima libero sapiente odio perferendis, error eaque.
+                </p>
+
+            </div>
+
+        </article>
+
+    </section>
+
+    <div class="button-row">
+
+        <a href="more.html" class="ui-button">
+            MORE WORKS
+        </a>
+
+        <a href="./legacy/index.html" class="ui-button">
+            LEGACY PAGE
+        </a>
+
+    </div>
+
+</main>
+
+<footer>
+
+    <div class="footer-left">
+
+        <h2>
+            CONTACT
+        </h2>
+
+        <p>
+            Probably available,<br>
+            for freelance projects.
+        </p>
+
+    </div>
+
+    <div class="footer-right">
+
+        <div class="footer-block">
+            <span>MAIL</span>
+            <p>hibranshahriar2006@gmail.com</p>
+        </div>
+
+        <div class="footer-block">
+            <span>SOCIALS</span>
+            <a href="https://www.facebook.com/hibran.shahriar/">FACEBOOK</a>
+            <a href="https://www.artstation.com/epycxt">ARTSTATION</a>
+        </div>
+
+    </div>
+
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scene test — Ihanof, Imuf (Phase 3 harness)</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #100e0b; color: #ece3ce; font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+  #scene-container { position: fixed; inset: 0; overflow: hidden; background: #100e0b; }
+  #bar { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center;
+         padding: 8px 12px; background: rgba(16,14,11,0.82); border-bottom: 1px solid #362e20; }
+  #bar button { font: inherit; padding: 5px 10px; background: transparent; color: inherit; border: 1px solid #5a4e36; border-radius: 3px; cursor: pointer; }
+  #bar button:hover { border-color: #c7a227; }
+  #bar button.on { background: #c7a227; color: #17130d; border-color: #c7a227; }
+  #bar label { display: inline-flex; gap: 6px; align-items: center; }
+  #stats { margin-left: auto; color: #93876d; }
+  #panel-sim { position: fixed; left: 0; right: 0; bottom: 0; height: 36%; z-index: 4; background: #ece3ce; color: #221b10;
+               border-top: 1px solid #c9bb98; padding: 20px 22px; display: none; font-family: Georgia, serif; font-size: 17px; }
+</style>
+</head>
+<body>
+  <div id="scene-container"></div>
+  <div id="panel-sim">Simulated decision panel (covers the bottom ~36% of the scene, like the real one). Flies should stay above this.</div>
+
+  <div id="bar">
+    <span>Era:</span>
+    <span id="era-btns"></span>
+    <button id="cycle">Auto-cycle 1-6</button>
+    <span>Pop:</span>
+    <span id="pop-btns"></span>
+    <button id="freeze">freeze()</button>
+    <button id="newrun">setEra(1) after freeze (new run)</button>
+    <label><input type="checkbox" id="sim" /> decision panel</label>
+    <label><input type="checkbox" id="hide" /> hide UI</label>
+    <span id="stats"></span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="scene.js"></script>
+  <script>
+    (function () {
+      var errors = 0;
+      window.addEventListener("error", function (e) { errors++; document.getElementById("stats").textContent = "ERRORS: " + errors + " — " + e.message; });
+
+      Scene.init(document.getElementById("scene-container"));
+      var era = 1;
+      Scene.setEra(1);
+      Scene.setPopulation(50);
+
+      var eraBtns = document.getElementById("era-btns");
+      [1, 2, 3, 4, 5, 6].forEach(function (n) {
+        var b = document.createElement("button");
+        b.textContent = n; b.dataset.era = n;
+        b.onclick = function () { go(n); };
+        eraBtns.appendChild(b);
+      });
+      function go(n) {
+        era = n; Scene.setEra(n);
+        [].forEach.call(eraBtns.children, function (b) { b.classList.toggle("on", +b.dataset.era === n); });
+      }
+      go(1);
+
+      var popBtns = document.getElementById("pop-btns");
+      [0, 3, 12, 50, 300, 3000].forEach(function (p) {
+        var b = document.createElement("button");
+        b.textContent = p; b.onclick = function () { Scene.setPopulation(p); };
+        popBtns.appendChild(b);
+      });
+
+      var timer = null, cyc = document.getElementById("cycle");
+      cyc.onclick = function () {
+        if (timer) { clearInterval(timer); timer = null; cyc.classList.remove("on"); return; }
+        cyc.classList.add("on");
+        timer = setInterval(function () { go(era % 6 + 1); }, 6000);
+      };
+      document.getElementById("freeze").onclick = function () { Scene.freeze(); };
+      document.getElementById("newrun").onclick = function () { go(1); };
+      document.getElementById("sim").onchange = function (e) { document.getElementById("panel-sim").style.display = e.target.checked ? "block" : "none"; };
+      document.getElementById("hide").onchange = function (e) { document.getElementById("bar").style.display = e.target.checked ? "none" : "flex"; };
+
+      // fps readout
+      var frames = 0, last = performance.now();
+      (function tick(now) {
+        frames++;
+        if (now - last > 1000) {
+          if (!errors) document.getElementById("stats").textContent = Math.round(frames * 1000 / (now - last)) + " fps";
+          frames = 0; last = now;
+        }
+        requestAnimationFrame(tick);
+      })(last);
+    })();
+  </script>
+</body>
+</html>

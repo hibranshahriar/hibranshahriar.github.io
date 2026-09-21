@@ -142,6 +142,18 @@
     }
   };
 
+  // Post-Phase 6 camera nudge: sit a little higher and tilt down a little
+  // more, so individual flies read against the ground rather than blending
+  // into the building backdrop. Applied once to every era's framing, so the
+  // per-era values above stay as originally tuned. Both are world units
+  // (1 unit ~ 1 metre); set both to 0 to restore the original framing.
+  var CAM_RAISE = 0.8;           // added to each era's camY
+  var LOOK_DROP = 0.4;           // subtracted from each era's lookY (steeper downward angle)
+  Object.keys(ERA).forEach(function (k) {
+    ERA[k].camY += CAM_RAISE;
+    ERA[k].lookY -= LOOK_DROP;
+  });
+
   // Which fields are cross-faded between eras.
   var SCALARS = ["sunI", "sunAz", "sunEl", "hemiI", "fogNear", "fogFar",
                  "camX", "camY", "camZ", "lookX", "lookY", "lookZ", "fov",

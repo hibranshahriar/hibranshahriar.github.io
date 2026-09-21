@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="A short game about a colony of sentient fruit flies trying to imitate human civilization" />
+  <title>Ihanof Imuf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+  <!-- TITLE SCREEN -->
+  <section id="title-screen" class="screen">
+    <div class="title-card">
+      <p class="title-kicker">i have no fruit and i must fly</p>
+      <h1 class="title-name">Ihanof, Imuf</h1>
+      <div class="title-actions">
+        <button id="title-start-btn" class="btn btn-primary" type="button">Begin the colony's record</button>
+        <button id="title-records-btn" class="btn btn-secondary" type="button">View records</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="game-screen" class="screen hidden">
+    <header class="hud">
+      <div class="hud-era">
+        <span class="hud-label">Era</span>
+        <span id="hud-era-name" class="hud-era-name">&mdash;</span>
+      </div>
+      <dl class="hud-stats">
+        <div class="hud-stat">
+          <dt>Population</dt>
+          <dd id="hud-population">0</dd>
+        </div>
+        <div class="hud-stat">
+          <dt>Sustenance</dt>
+          <dd id="hud-sustenance">0</dd>
+        </div>
+        <div class="hud-stat">
+          <dt>Cohesion</dt>
+          <dd id="hud-cohesion">0</dd>
+        </div>
+        <div class="hud-stat">
+          <dt>Exposure</dt>
+          <dd id="hud-exposure">0</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="scene-wrapper">
+      <div id="scene-container" class="scene-container"></div>
+
+      <p id="crisis-notice" class="crisis-notice hidden" aria-live="polite"></p>
+
+      <div id="idle-gauge" class="idle-gauge hidden" aria-hidden="true">
+        <p class="idle-gauge-label">The colony tends to itself</p>
+        <div class="idle-gauge-track"><div id="idle-gauge-fill" class="idle-gauge-fill"></div></div>
+      </div>
+
+      <div id="decision-panel" class="decision-panel hidden">
+        <p id="decision-flavor-text" class="decision-flavor-text"></p>
+        <div id="decision-options-list" class="decision-options-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDING SCREEN — overlays #scene-container, never replaces it (spec §9.2) -->
+  <section id="ending-screen" class="screen ending-screen hidden" role="dialog" aria-modal="true" aria-labelledby="ending-heading">
+    <div class="ending-card">
+      <h2 id="ending-heading" class="sr-only">The colony's record ends here</h2>
+      <p id="ending-epilogue-text" class="ending-epilogue-text"></p>
+      <p id="ending-stats" class="ending-stats"></p>
+      <p id="ending-session-length" class="ending-session-length"></p>
+      <p id="ending-replay-hook" class="ending-replay-hook"></p>
+      <button id="ending-restart-btn" class="btn btn-primary" type="button">Begin again</button>
+    </div>
+  </section>
+
+  <!-- RECORDS PANEL -->
+  <section id="records-panel" class="screen records-panel hidden" role="dialog" aria-modal="true" aria-labelledby="records-heading">
+    <div class="records-card">
+      <div class="records-header">
+        <h2 id="records-heading">Records</h2>
+        <button id="records-close-btn" class="btn btn-secondary" type="button">Close</button>
+      </div>
+      <ul id="records-list" class="records-list"></ul>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="content.js"></script>
+  <script src="storage.js"></script>
+  <script src="audio.js"></script>
+  <script src="scene.js"></script>
+  <script src="ui.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

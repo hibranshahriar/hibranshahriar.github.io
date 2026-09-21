@@ -1,0 +1,600 @@
+/* =========================================================================
+   Ihanof, Imuf — style.css (Phase 1, final)
+
+   Design concept: two surfaces.
+   - The "observation glass" — dark, near-black chrome (title screen, HUD,
+     the scene view itself) that frames the colony like a documentary set.
+   - "The record" — a warm paper surface (decision panel, ending card,
+     records card) for anything that is literally text being read off the
+     colony's log: flavor text, epilogues, the records list.
+   That split carries the game's own pseudo-documentary premise (spec §1,
+   §4.1) instead of a generic dark-mode-everywhere treatment.
+   ========================================================================= */
+
+:root {
+  /* observation glass */
+  --bg: #100e0b;
+  --bg-soft: #171209;
+  --ink: #ece3ce;
+  --ink-dim: #93876d;
+  --line: #362e20;
+
+  /* the record (paper) */
+  --paper: #ece3ce;
+  --paper-ink: #221b10;
+  --paper-ink-dim: #6b5f45;
+  --paper-line: #c9bb98;
+
+  /* accents */
+  --brass: #c7a227;
+  --brass-hover: #dab233;
+  --safe: #61795d;
+  --bold: #a14e33;
+
+  --radius-sm: 3px;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ---- utilities --------------------------------------------------------- */
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+/* ---- shared full-viewport screen shell --------------------------------- */
+
+.screen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+}
+
+/* ---- title screen ------------------------------------------------------- */
+
+#title-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 30%, rgba(199, 162, 39, 0.08), transparent 60%), var(--bg);
+}
+
+.title-card {
+  max-width: 420px;
+  text-align: center;
+}
+
+.title-kicker {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-dim);
+}
+
+.title-name {
+  margin: 0 0 40px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(40px, 9vw, 64px);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.title-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---- buttons ------------------------------------------------------------ */
+
+.btn {
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 12px 28px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #17130d;
+}
+
+.btn-primary:hover {
+  background: var(--brass-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  border-color: var(--ink-dim);
+}
+
+/* ---- game screen / HUD --------------------------------------------------- */
+
+#game-screen {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+
+.hud-era {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.hud-era-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+}
+
+.hud-stats {
+  display: flex;
+  gap: 22px;
+  margin: 0;
+}
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.hud-stat dt {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.hud-stat dd {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---- the scene view ------------------------------------------------------ */
+
+.scene-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.scene-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 20%, rgba(199, 162, 39, 0.05), transparent 55%),
+    linear-gradient(180deg, #1b160f 0%, #100e0b 70%);
+}
+
+/* Phase 3 mounts the Three.js canvas here; the gradient above is a
+   placeholder backdrop so the frame reads correctly before it exists. */
+
+.crisis-notice {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  z-index: 2;
+  max-width: 80%;
+  padding: 8px 18px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: notice-in 200ms ease-out;
+}
+
+@keyframes notice-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ---- idle gauge ----------------------------------------------------------
+   Fills over the idle window before each decision (ui.js drives the fill
+   from the clock, so it is unaffected by the reduced-motion rule below).
+   Sits where the decision panel will appear; ui.js hides it the moment a
+   decision opens, so the two never overlap. */
+
+.idle-gauge {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  z-index: 1;
+  width: min(340px, 76%);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: fade-in 300ms ease-out;
+}
+
+.idle-gauge-label {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink);
+  opacity: 0.85;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75);
+}
+
+.idle-gauge-track {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(236, 227, 206, 0.2);
+}
+
+.idle-gauge-fill {
+  height: 100%;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 120ms linear;
+}
+
+/* ---- decision panel ------------------------------------------------------ */
+
+.decision-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 20px 22px 24px;
+  border-top: 1px solid var(--paper-line);
+  background: var(--paper);
+  color: var(--paper-ink);
+  animation: panel-up 220ms ease-out;
+}
+
+@keyframes panel-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.decision-flavor-text {
+  max-width: 640px;
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.decision-options-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--paper-line);
+}
+
+/* Shared hook for every dynamically-generated option button (build plan
+   §2.5). The left-border color is the "bold vs. safe" visual distinction
+   the copy itself is never allowed to state (spec §8.1, §4.1) — the stub
+   ui.js applies --bold when an option carries a risk object, --safe when
+   it doesn't; Phase 5 may refine that rule but the class hooks stay. */
+
+.decision-option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-bottom: 1px solid var(--paper-line);
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: background 120ms ease, border-left-color 120ms ease;
+}
+
+.decision-option-btn:hover,
+.decision-option-btn:focus-visible {
+  background: rgba(34, 27, 16, 0.06);
+}
+
+.decision-option-btn--safe {
+  border-left-color: var(--safe);
+}
+
+.decision-option-btn--bold {
+  border-left-color: var(--bold);
+}
+
+.decision-option-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--paper-ink);
+}
+
+.decision-option-hint {
+  font-size: 12px;
+  color: var(--paper-ink-dim);
+}
+
+/* ---- ending screen --------------------------------------------------- */
+
+.ending-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  /* Translucent, not opaque — the frozen scene stays dimly visible behind
+     the card (spec §9.2: "camera drift continuing, epilogue as an
+     overlay"). */
+  background: rgba(16, 14, 11, 0.86);
+  animation: fade-in 260ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ending-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 30px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+  color: var(--paper-ink);
+}
+
+.ending-epilogue-text {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.ending-stats,
+.ending-session-length {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--paper-ink-dim);
+}
+
+.ending-session-length {
+  margin-bottom: 18px;
+}
+
+.ending-replay-hook {
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--paper-ink);
+}
+
+/* ---- records panel ----------------------------------------------------- */
+
+.records-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(16, 14, 11, 0.86);
+  animation: fade-in 200ms ease-out;
+}
+
+.records-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 420px;
+  max-height: 70vh;
+  padding: 26px 26px 20px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+  color: var(--paper-ink);
+}
+
+.records-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.records-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.records-list {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border-top: 1px solid var(--paper-line);
+}
+
+.records-list li {
+  padding: 10px 2px;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: 13px;
+}
+
+.records-empty {
+  color: var(--paper-ink-dim);
+  font-style: italic;
+}
+
+.records-count {
+  border-bottom: none !important;
+  color: var(--paper-ink-dim);
+  font-size: 11px;
+}
+
+/* ---- Phase 5 additions ---------------------------------------------------
+   The only change to this file in Phase 5. The Records card is a paper
+   surface, but .btn-secondary is written for the dark chrome (cream text),
+   which left the Close button's label invisible on cream paper. Scoped to
+   the card so the title screen's secondary button is untouched. Also gives
+   the reached-ending names the record's display face. */
+
+.records-card .btn-secondary {
+  border-color: var(--paper-line);
+  color: var(--paper-ink);
+}
+
+.records-card .btn-secondary:hover {
+  border-color: var(--paper-ink-dim);
+}
+
+.records-list .records-ending {
+  font-family: var(--font-display);
+  font-size: 15px;
+}
+
+/* ---- responsive ---------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .hud {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .hud-stats {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 14px;
+  }
+
+  .hud-stat {
+    align-items: flex-start;
+  }
+
+  .title-name {
+    font-size: 44px;
+  }
+
+  .decision-panel {
+    padding: 16px 16px 20px;
+  }
+}
+
+/* ---- reduced motion ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

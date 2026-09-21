@@ -1532,7 +1532,7 @@
       console.warn("[Scene] WebGL is unavailable; Scene is disabled.", e);
       return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = T.PCFSoftShadowMap;
     var cv = renderer.domElement;

@@ -536,7 +536,7 @@ function copyEmail(el){
     const email = el.dataset.email;
 
     function showCopied(){
-        el.textContent = "Copied!";
+        el.textContent = "[copied]";
         el.classList.add("copied");
         clearTimeout(el._copyTimeout);
         el._copyTimeout = setTimeout(() => {

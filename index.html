@@ -736,7 +736,7 @@ footer{
         <article class="vertical-work-card">
 
             <div class="vertical-work-image">
-                <a href="./logos/logos.html">
+                <a href="./logos/">
                     <img src="tba_w.png" alt="">
                 </a>
             </div>
@@ -759,11 +759,11 @@ footer{
 
     <div class="button-row">
 
-        <a href="./more/index.html" class="ui-button">
+        <a href="./more/" class="ui-button">
             MORE WORKS
         </a>
 
-        <a href="./legacy/index.html" class="ui-button" target="_blank">
+        <a href="./legacy/" class="ui-button" target="_blank">
             LEGACY PAGE
         </a>
 
@@ -808,7 +808,7 @@ function copyEmail(el){
     const email = el.dataset.email;
 
     function showCopied(){
-        el.textContent = "Copied!";
+        el.textContent = "[copied]";
         el.classList.add("copied");
         clearTimeout(el._copyTimeout);
         el._copyTimeout = setTimeout(() => {

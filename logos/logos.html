@@ -175,31 +175,25 @@ main{
 
 /* WORKS */
 
-.works{
-    display:flex;
-    flex-direction:column;
-    gap:35px;
-}
+/* LOGO GRID — square images only, 2-5 per row depending on width */
 
-/* FEATURED CARD */
-
-.featured-card{
+.logo-grid{
     display:grid;
-    grid-template-columns:60% 40%;
-    border:1px solid rgba(0,0,0,0.18);
-    min-height:420px;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:24px;
 }
 
-.featured-image{
+.logo-card{
+    aspect-ratio:1 / 1;
+    border:1px solid rgba(0,0,0,0.18);
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:30px;
-    border-right:1px solid rgba(0,0,0,0.15);
+    padding:20px;
     min-width:0;
 }
 
-.featured-image a{
+.logo-card a{
     width:100%;
     height:100%;
     display:flex;
@@ -207,96 +201,18 @@ main{
     align-items:center;
 }
 
-.featured-image img{
+.logo-card img{
     max-width:100%;
     max-height:100%;
     object-fit:contain;
     display:block;
 }
 
-.featured-content{
-    padding:50px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    min-width:0;
-}
-
-.featured-label{
-    font-size:0.7rem;
-    color:var(--muted);
-    margin-bottom:25px;
-}
-
-.featured-title{
-    font-size:2.6rem;
-    font-weight:200;
-    letter-spacing:0.16em;
-    line-height:1.1;
-    margin-bottom:25px;
-    overflow-wrap:break-word;
-}
-
-.featured-description{
-    color:var(--muted);
-    line-height:2;
-    font-size:0.9rem;
-}
-
-/* SMALL WORKS */
-
-.work-card{
-    display:grid;
-    grid-template-columns:40% 60%;
-    border:1px solid rgba(0,0,0,0.18);
-    min-height:240px;
-}
-
-.work-image{
-    padding:25px;
-    border-right:1px solid rgba(0,0,0,0.15);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-width:0;
-}
-
-.work-image a{
-    width:100%;
-    height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.work-image img{
-    max-width:100%;
-    max-height:100%;
-    object-fit:contain;
-    display:block;
-}
-
-.work-content{
-    padding:40px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    min-width:0;
-}
-
-.work-title{
-    font-size:1.4rem;
-    font-weight:300;
-    letter-spacing:0.14em;
-    margin-bottom:18px;
-    overflow-wrap:break-word;
-}
-
-.work-description{
-    color:var(--muted);
-    line-height:1.9;
-    font-size:0.85rem;
+/* below this, auto-fit would drop to a single column — hold the floor at 2 */
+@media(max-width:540px){
+    .logo-grid{
+        grid-template-columns:repeat(2, 1fr);
+    }
 }
 
 /* BUTTONS */
@@ -375,36 +291,8 @@ footer{
 
 @media(max-width:1000px){
 
-    .featured-card,
-    .work-card{
-        grid-template-columns:1fr;
-    }
-
-    .featured-image,
-    .work-image{
-        border-right:none;
-        border-bottom:1px solid rgba(0,0,0,0.15);
-    }
-
     .hero-title{
         font-size:3rem;
-    }
-}
-
-/* Featured title is 2.6rem with wide letter-spacing, so a single long
-   word (e.g. "ANNOUNCED") needs more width than the 40% content column
-   has between roughly 1001px and 1200px viewport width. Step it down
-   just in that range so it wraps cleanly instead of forcing the column
-   wider than the card. */
-@media(min-width:1001px) and (max-width:1200px){
-    .featured-title{
-        font-size:1.9rem;
-    }
-}
-
-@media(max-width:480px){
-    .featured-title{
-        font-size:1.4rem;
     }
 }
 
@@ -481,92 +369,6 @@ footer{
     text-decoration:none;
 }
 
-.work-card.reverse .work-image{
-    order:2;
-    border-right:none;
-    border-left:1px solid rgba(0,0,0,0.15);
-}
-
-.work-card.reverse .work-content{
-    order:1;
-}
-
-/* On mobile the card stacks into a single column. Without this, the
-   unconditional order/border rules above (needed for the desktop
-   side-by-side reverse layout) would carry over and put the text
-   above the image, with a stray left border, on every reverse card. */
-@media(max-width:1000px){
-    .work-card.reverse .work-image{
-        order:0;
-        border-left:none;
-        border-right:none;
-        border-bottom:1px solid rgba(0,0,0,0.15);
-    }
-
-    .work-card.reverse .work-content{
-        order:0;
-    }
-}
-
-.vertical-work-card{
-    border:1px solid rgba(0,0,0,0.18);
-
-    display:flex;
-    flex-direction:column;
-
-    min-height:500px;
-}
-
-.vertical-work-image{
-    width:100%;
-
-    padding:30px;
-
-    border-bottom:1px solid rgba(0,0,0,0.15);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.vertical-work-image a{
-    width:100%;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.vertical-work-image img{
-    width:100%;
-    height:auto;
-
-    display:block;
-
-    object-fit:contain;
-}
-
-.vertical-work-content{
-    padding:40px;
-}
-
-.vertical-work-title{
-    font-size:1.6rem;
-    font-weight:300;
-    letter-spacing:0.14em;
-
-    margin-bottom:18px;
-    overflow-wrap:break-word;
-}
-
-.vertical-work-description{
-    color:var(--muted);
-
-    line-height:1.9;
-
-    font-size:0.85rem;
-}
-
 .copy-email{
     cursor:pointer;
     transition:color 0.25s;
@@ -606,103 +408,84 @@ footer{
     <section class="hero">
 
         <h1 class="hero-title">
-            MORE WORKS
+            LOGO ARCHIVE
         </h1>
 
         <p class="hero-description">
-            [This webpage is still under construction] Click on the images for detailed view.
+            [This webpage is still under construction]
         </p>
 
     </section>
 
     <section class="works">
 
-        <article class="work-card reverse">
-            <div class="work-image">
-                <a href="./assets/IMG_0890.jfif" target="_blank">
-                    <img src="./assets/dragon_prev.jpg">
-                </a>
-            </div>
+        <!-- Each .logo-card holds one square logo image. Add or remove
+             cards freely -- the grid reflows on its own (2 to 5 per row
+             depending on window width). Swap the placeholder tba_s.png
+             src/alt for your actual logo files. -->
 
-            <div class="work-content">
+        <div class="logo-grid">
 
-                <h3 class="work-title">
-                    DRAGON AT REST
-                </h3>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 1">
+            </a>
+        </div>
 
-                <p class="work-description">
-                    [PHOTO] [CANON SX50HS] Taken sometime in late 2021. Exif data was lost.
-                </p>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 2">
+            </a>
+        </div>
 
-            </div>
-        </article>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 3">
+            </a>
+        </div>
 
-        <article class="work-card">
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 4">
+            </a>
+        </div>
 
-            <div class="work-image">
-                <a href="#">
-                    <img src="tba_h.png">
-                </a>
-            </div>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 5">
+            </a>
+        </div>
 
-            <div class="work-content">
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 6">
+            </a>
+        </div>
 
-                <h3 class="work-title">
-                    #2 TO BE ANNOUNCED
-                </h3>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 7">
+            </a>
+        </div>
 
-                <p class="work-description">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem reprehenderit tempora rerum cum quas veritatis maiores omnis vero doloremque earum?
-                </p>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 8">
+            </a>
+        </div>
 
-            </div>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 9">
+            </a>
+        </div>
 
-        </article>
-
-        <article class="work-card">
-
-            <div class="work-image">
-                <a href="#">
-                    <img src="tba_s.png">
-                </a>
-            </div>
-
-            <div class="work-content">
-
-                <h3 class="work-title">
-                    #3 TO BE ANNOUNCED
-                </h3>
-
-                <p class="work-description">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel doloremque deserunt sunt. Aspernatur animi doloribus unde dicta cum maiores mollitia.
-                </p>
-
-            </div>
-
-        </article>
-
-
-        <article class="vertical-work-card">
-
-            <div class="vertical-work-image">
-                <a href="https://hibranshahriar.github.io/ihanof-imuf/" target="_blank">
-                    <img src="./assets/ihin_play.gif" alt="">
-                </a>
-            </div>
-
-            <div class="vertical-work-content">
-
-                <h3 class="vertical-work-title">
-                    IHANOF, IMUF
-                </h3>
-
-                <p class="vertical-work-description">
-                    [WEB] [JS] A (very) short game in which you guide a colony of sentient fruit flies trying to imitate human civilization.
-                </p>
-
-            </div>
-
-        </article>
+        <div class="logo-card">
+            <a href="tba_s.png">
+                <img src="tba_s.png" alt="Logo 10">
+            </a>
+        </div>
+        </div>
 
     </section>
 

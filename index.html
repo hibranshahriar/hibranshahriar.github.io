@@ -567,6 +567,19 @@ footer{
     font-size:0.85rem;
 }
 
+.copy-email{
+    cursor:pointer;
+    transition:color 0.25s;
+}
+
+.copy-email:hover{
+    color:var(--dark);
+}
+
+.copy-email.copied{
+    color:#a87d2f;
+}
+
 </style>
 </head>
 
@@ -723,7 +736,7 @@ footer{
         <article class="vertical-work-card">
 
             <div class="vertical-work-image">
-                <a href="#">
+                <a href="./logos/logos.html">
                     <img src="tba_w.png" alt="">
                 </a>
             </div>
@@ -731,7 +744,7 @@ footer{
             <div class="vertical-work-content">
 
                 <h3 class="vertical-work-title">
-                    #6 TO BE ANNOUNCED
+                    LOGO ARCHIVE
                 </h3>
 
                 <p class="vertical-work-description">
@@ -767,8 +780,8 @@ footer{
         </h2>
 
         <p>
-            Probably available,<br>
-            for freelance projects.
+            Might be available,<br>
+            for comission / freelance projects.
         </p>
 
     </div>
@@ -776,8 +789,8 @@ footer{
     <div class="footer-right">
 
         <div class="footer-block">
-            <span>MAIL</span>
-            <p>hibranshahriar2006@gmail.com</p>
+            <span>MAIL [click to copy]</span>
+            <p class="copy-email" data-email="hibranshahriar2006@gmail.com" tabindex="0" role="button" title="Click to copy">hibranshahriar2006@gmail.com</p>
         </div>
 
         <div class="footer-block">
@@ -789,6 +802,49 @@ footer{
     </div>
 
 </footer>
+
+<script>
+function copyEmail(el){
+    const email = el.dataset.email;
+
+    function showCopied(){
+        el.textContent = "Copied!";
+        el.classList.add("copied");
+        clearTimeout(el._copyTimeout);
+        el._copyTimeout = setTimeout(() => {
+            el.textContent = email;
+            el.classList.remove("copied");
+        }, 1500);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(email).then(showCopied).catch(() => fallbackCopy(email, showCopied));
+    } else {
+        fallbackCopy(email, showCopied);
+    }
+}
+
+function fallbackCopy(text, done){
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    temp.style.position = "fixed";
+    temp.style.opacity = "0";
+    document.body.appendChild(temp);
+    temp.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(temp);
+}
+
+document.querySelectorAll(".copy-email").forEach(el => {
+    el.addEventListener("click", () => copyEmail(el));
+    el.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            copyEmail(el);
+        }
+    });
+});
+</script>
 
 </body>
 </html>

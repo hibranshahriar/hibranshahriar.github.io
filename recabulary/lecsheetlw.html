@@ -23,8 +23,8 @@
     --accent-correct:#5f8f6a;
     --accent-wrong:#b8503f;
     --accent-gold:#c99a3e;
+    --accent-gold-dark:#9c6f1f;
     --hairline: rgba(43,32,19,.18);
-    --hairline-dark: rgba(255,255,255,.1);
   }
 
   *{ box-sizing:border-box; }
@@ -44,10 +44,7 @@
 
   header{
     width:100%;
-    max-width:520px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    max-width:480px;
     margin-bottom: 8vh;
   }
 
@@ -57,25 +54,6 @@
     letter-spacing: .02em;
     color: var(--text-on-dark);
   }
-
-  .score{
-    display:flex;
-    align-items:center;
-    gap: 6px;
-    font-size: .85rem;
-    color: var(--text-on-dark-dim);
-  }
-
-  .tally{
-    display:inline-block;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-size: .78rem;
-    font-weight: 700;
-    color: #fff;
-  }
-  .tally-correct{ background: var(--accent-correct); }
-  .tally-wrong{ background: var(--accent-wrong); }
 
   main{
     width:100%;
@@ -96,6 +74,22 @@
     font-weight: 500;
   }
 
+  .title{
+    margin: 0 0 10px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem);
+    color: var(--text-dark);
+    line-height: 1.15;
+  }
+
+  .subtitle{
+    margin: 0 0 26px;
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
   .word{
     margin: 0 0 30px;
     font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
@@ -105,12 +99,85 @@
     line-height: 1.15;
   }
 
+  /* Letter grid */
+  .letter-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+    gap: 10px;
+  }
+
+  .letter-btn{
+    aspect-ratio: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .letter-btn:hover:not(:disabled), .letter-btn:focus-visible:not(:disabled){
+    background: rgba(201,154,62,.16);
+    border-color: var(--accent-gold-dark);
+  }
+  .letter-btn:focus-visible{ outline: 2px solid var(--accent-gold-dark); outline-offset: 1px; }
+  .letter-btn:disabled{
+    color: var(--text-muted);
+    opacity: .35;
+    cursor: not-allowed;
+  }
+
+  /* Quiz view */
+  .quiz-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 24px;
+  }
+
+  .back-link{
+    background:none;
+    border:none;
+    color: var(--text-muted);
+    font-size: .82rem;
+    cursor:pointer;
+    padding: 0;
+    border-bottom: 1px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .back-link:hover, .back-link:focus-visible{
+    color: var(--accent-gold-dark);
+    border-bottom-color: var(--accent-gold-dark);
+  }
+
+  .score{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: .85rem;
+    color: var(--text-muted);
+  }
+
+  .tally{
+    display:inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tally-correct{ background: var(--accent-correct); }
+  .tally-wrong{ background: var(--accent-wrong); }
+
   .options{
     list-style:none;
     margin:0;
     padding:0;
   }
-
   .options li + li{
     border-top: 1px solid var(--hairline);
   }
@@ -190,7 +257,7 @@
   .example-text strong{
     font-style: normal;
     font-weight: 600;
-    color: #9c6f1f;
+    color: var(--accent-gold-dark);
   }
 
   @media (max-width: 480px){
@@ -207,17 +274,31 @@
 
   <div class="scene">
     <header>
-      <span class="brand">Recabulary | Curated List</span>
-      <span class="score">Score <span class="tally tally-correct" id="correctTally">+0</span><span class="tally tally-wrong" id="wrongTally">-0</span></span>
+      <span class="brand">Recabulary | Curated Letter-wise</span>
     </header>
 
     <main>
-      <div class="card">
-        <p class="tag" id="cardTag">Card 1 of 20</p>
-        <h1 class="word" id="wordDisplay">—</h1>
-        <ul class="options" id="options"></ul>
-        <div class="example" id="exampleSentence"><p class="example-text" id="exampleText"></p></div>
-        <button class="next-btn" id="nextBtn" hidden>Next card</button>
+      <div id="letterView">
+        <div class="card">
+          <p class="tag">370 words total</p>
+          <h1 class="title">Curated List</h1>
+          <p class="subtitle">Pick a starting letter</p>
+          <div class="letter-grid" id="letterGrid"></div>
+        </div>
+      </div>
+
+      <div id="quizView" hidden>
+        <div class="card">
+          <div class="quiz-topbar">
+            <button class="back-link" id="backBtn">‹ All letters</button>
+            <span class="score">Score <span class="tally tally-correct" id="correctTally">+0</span><span class="tally tally-wrong" id="wrongTally">-0</span></span>
+          </div>
+          <p class="tag" id="cardTag"></p>
+          <h1 class="word" id="wordDisplay">—</h1>
+          <ul class="options" id="options"></ul>
+          <div class="example" id="exampleSentence"><p class="example-text" id="exampleText"></p></div>
+          <button class="next-btn" id="nextBtn" hidden>Next card</button>
+        </div>
       </div>
     </main>
   </div>
@@ -596,21 +677,29 @@
 { word: "Zonal", meaning: "relating to a zone or region.", example: "The report analyzed zonal variations in climate." }
   ];
 
+  const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const OPTION_LETTERS = ["A", "B", "C", "D", "E"];
+
+  let selectedLetter = null;
+  let letterPool = [];
   let bag = [];
   let current = null;
   let answered = false;
   let correctCount = 0;
   let wrongCount = 0;
 
-  const wordDisplay = document.getElementById("wordDisplay");
-  const optionsList = document.getElementById("options");
-  const cardTag = document.getElementById("cardTag");
+  const letterView = document.getElementById("letterView");
+  const letterGrid = document.getElementById("letterGrid");
+  const quizView = document.getElementById("quizView");
+  const backBtn = document.getElementById("backBtn");
   const correctTally = document.getElementById("correctTally");
   const wrongTally = document.getElementById("wrongTally");
+  const cardTag = document.getElementById("cardTag");
+  const wordDisplay = document.getElementById("wordDisplay");
+  const optionsList = document.getElementById("options");
   const nextBtn = document.getElementById("nextBtn");
   const exampleSentence = document.getElementById("exampleSentence");
   const exampleText = document.getElementById("exampleText");
-  const LETTERS = ["A", "B", "C", "D", "E"];
 
   function shuffle(arr){
     for(let i = arr.length - 1; i > 0; i--){
@@ -620,8 +709,13 @@
     return arr;
   }
 
-  function refillBag(){
-    bag = shuffle([...WORDS]);
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlightWord(sentence, word){
+    const regex = new RegExp("\\b" + escapeRegExp(word) + "\\b", "i");
+    return sentence.replace(regex, match => "<strong>" + match + "</strong>");
   }
 
   function pickDistractors(word, count){
@@ -639,8 +733,48 @@
     return result;
   }
 
+  function buildLetterGrid(){
+    const counts = {};
+    WORDS.forEach(w => {
+      const l = w.word[0].toUpperCase();
+      counts[l] = (counts[l] || 0) + 1;
+    });
+
+    ALPHABET.forEach(letter => {
+      const btn = document.createElement("button");
+      btn.className = "letter-btn";
+      btn.textContent = letter;
+      const count = counts[letter] || 0;
+      if(count === 0){
+        btn.disabled = true;
+      } else {
+        btn.title = count + " word" + (count === 1 ? "" : "s");
+        btn.addEventListener("click", () => selectLetter(letter));
+      }
+      letterGrid.appendChild(btn);
+    });
+  }
+
+  function selectLetter(letter){
+    selectedLetter = letter;
+    letterPool = WORDS.filter(w => w.word[0].toUpperCase() === letter);
+    correctCount = 0;
+    wrongCount = 0;
+    correctTally.textContent = "+0";
+    wrongTally.textContent = "-0";
+    bag = [];
+    letterView.hidden = true;
+    quizView.hidden = false;
+    nextCard();
+  }
+
+  function backToLetters(){
+    quizView.hidden = true;
+    letterView.hidden = false;
+  }
+
   function nextCard(){
-    if(bag.length === 0) refillBag();
+    if(bag.length === 0) bag = shuffle([...letterPool]);
     current = bag.pop();
     answered = false;
     nextBtn.hidden = true;
@@ -650,7 +784,7 @@
   function render(){
     exampleSentence.classList.remove("is-visible");
     exampleText.innerHTML = "";
-    cardTag.textContent = "Card " + (WORDS.length - bag.length) + " of " + WORDS.length;
+    cardTag.textContent = selectedLetter + " · Card " + (letterPool.length - bag.length) + " of " + letterPool.length;
     wordDisplay.textContent = current.word;
 
     const distractorCount = Math.min(4, WORDS.length - 1);
@@ -663,20 +797,11 @@
       const btn = document.createElement("button");
       btn.className = "option";
       btn.dataset.meaning = choice.meaning;
-      btn.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span>' + choice.meaning + '</span>';
+      btn.innerHTML = '<span class="letter">' + OPTION_LETTERS[i] + '</span><span>' + choice.meaning + '</span>';
       btn.addEventListener("click", () => handleAnswer(btn, choice));
       li.appendChild(btn);
       optionsList.appendChild(li);
     });
-  }
-
-  function escapeRegExp(str){
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  function highlightWord(sentence, word){
-    const regex = new RegExp("\\b" + escapeRegExp(word) + "\\b", "i");
-    return sentence.replace(regex, match => "<strong>" + match + "</strong>");
   }
 
   function handleAnswer(btn, choice){
@@ -704,17 +829,18 @@
     nextBtn.hidden = false;
   }
 
+  backBtn.addEventListener("click", backToLetters);
   nextBtn.addEventListener("click", nextCard);
 
   document.addEventListener("keydown", (e) => {
-    if(answered) return;
+    if(quizView.hidden || answered) return;
     const idx = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 }[e.key];
     if(idx === undefined) return;
     const btn = optionsList.querySelectorAll(".option")[idx];
     if(btn) btn.click();
   });
 
-  nextCard();
+  buildLetterGrid();
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {

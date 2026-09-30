@@ -5,6 +5,7 @@ const PRECACHE_URLS = [
   "./index.html",
   "./grehp.html",
   "./lecsheet.html",
+  "./lecsheetlw.html",
   "./sathp.html",
   "./wsfull.html",
   "./wslw.html",
